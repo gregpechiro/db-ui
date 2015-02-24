@@ -1,19 +1,223 @@
-<!doctype html>
-<html lang="en">
-<head>
-	<title>Index</title>
-	<meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/kube/3.0.2/css/kube.min.css">
-	<link rel="stylesheet" type="text/css" href="css/site.css">
-	<link rel="stylesheet" type="text/css" href="css/style.css">
-	<!--[if lt IE 9]>
-	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
-</head>
-<body>
-	<section id="scripts">
-		<script>window.location="/component.html"</script>
-	</section>
-</body>
+<!DOCTYPE html>
+<html ng-app="gridster">
+	<head>
+		<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+		<script src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+		<style type="text/css">
+			.editable { padding: 10px; float: left; margin: 0 10px 10px 0; border:1px solid red;}
+		</style>
+		<title>Gridster Test</title>
+	</head>
+	<body>
+		<br><br>
+		<div ng-controller="gridCtrl">
+			<div class="row">
+				<div class="col-lg-offset-4 col-lg-4">
+					<button id="cler" class="btn btn-danger">Clear</button>
+					<button id="fill" class="btn btn-warning">Fill</button>
+					<button id="add" class="btn btn-success">Add</button>
+				</div>
+			</div>
+			<div class="row">
+				<div id="content">
+				</div>
+			</div>
+		</div>
+
+		<div id="addModal">
+			<form id="addForm">
+				<label>Type</label>
+				<select name="type">
+					<option value="table">Table</option>
+					<option value="form">Form</option>
+				</select>
+				<br><br>
+				<label>Data</label>
+				<select name="data">
+					<option value="users.json">Users</option>
+					<option value="user.json">User</option>
+				</select>
+			</form>
+		</div>
+
+		<div id="editModal">
+			<form id="editForm">
+			</form>
+		</div>
+
+
+		<script type="text/javascript" id="code">
+
+			var widgets = {};
+			var editing;
+			var i = 0;
+
+			function generateTable(entities) {
+				var table = '';
+				table += '<table style="width:100%;"><thead><tr>';
+				for(var col in entities[0]) {
+				   table += "<th>" + col + "</th>";
+				}
+				table += '</tr></thead><tbody>';
+				for(var row in entities) {
+					table += '<tr>';
+					for(var col in entities[row]) {
+						table += "<td>" + entities[row][col] + "</td>";
+					}
+					 table += '</tr>';
+				}
+				table += '</tbody></table>';
+				return table;
+			}
+
+
+			function generateForm(entity) {
+				var form = '</form">';
+				for(var field in entity) {
+					form += '<input style="width:100%;" placeholder="' + field + '">';
+				}
+				form += '<button style="width:100%;">Save</button>';
+				return form;
+			}
+
+			function display(data) {
+				for(var id in data) {
+					var widget = data[id]
+					var type = data[id].type;
+					var span = $('<span class="editable" style="position:absolute;"></span>');
+					span.attr('id', id);
+					span.css({top: widget.top,left:widget.left,height:widget.height,width:widget.width});
+					switch(type) {
+						case "table":
+							getData(widget.action, generateTable, span);
+							break;
+						case "form":
+							getData(widget.action, generateForm, span);
+							break;
+						default:
+							alert("type: " + type + ", action: " + action);
+					}
+				}
+			}
+
+			function add(type, action) {
+				var span = $('<span class="editable" style="position:absolute;"></span>');
+				var widget = {type: type, action: action};
+				widgets[i] = widget;
+				span.attr('id', i);
+				switch(type) {
+					case "table":
+						getData(widget.action, generateTable, span);
+						break;
+					case "form":
+						getData(widget.action, generateForm, span);
+						break;
+					default:
+						alert("type: " + type + ", action: " + action);
+				}
+				edit(i);
+				i++;
+			}
+
+			function init() {
+				$('.editable').draggable({
+					grid: [ 30, 30 ],
+					stop: function( event, ui ) {savePosition(ui);}
+				});
+				$('.editable' ).resizable({
+					stop: function( event, ui ) {saveSize(ui)}
+				});
+				$('.editable').click(function() {
+					edit(this.id);
+				});
+			}
+
+			function saveSize(ui) {
+				widgets[ui.helper[0].id].height = ui.size.height;
+				widgets[ui.helper[0].id].width = ui.size.width;
+			}
+
+			function savePosition(ui) {
+				widgets[ui.helper[0].id].left = ui.position.left
+				widgets[ui.helper[0].id].top = ui.position.top
+			}
+
+			function formToObject(form) {
+				var object = {};
+				var formArray = form.serializeArray();
+				$.each(formArray, function() {
+					if (object[this.name] !== undefined) {
+						if (!object[this.name].push) {
+							object[this.name] = [object[this.name]];
+						}
+							object[this.name].push(this.value || '');
+					} else {
+						object[this.name] = this.value || '';
+					}
+				});
+				return object;
+			};
+
+
+			$(document).ready(function() {
+				init();
+				$('#addModal').dialog({
+					modal: true,
+					autoOpen: false,
+					buttons: {
+						Save: function() {
+							var form = formToObject($('form[id="addForm"]'));
+							add(form.type, form.data);
+							$(this).dialog('close');
+						}
+					}
+				});
+				$('#editModal').dialog({
+					title : 'Edit Menu',
+					position: { my: "right	 top", at: "right top", of: window },
+					buttons: {
+						Delete: function() {
+							$('span[id="' + editing + '"]').remove();
+							$('#editModal').dialog('option', 'title', 'Edit Menu');
+							delete widgets[editing];
+							editing = null;
+						}
+					}
+				});
+			});
+
+			function getData(url, f, span) {
+				$.ajax({
+					datatype: "JSON",
+					url: url
+				}).done(function(data) {
+					$('.editable').resizable('destroy');
+					var w = f(data);
+					span.html(w);
+					$('#content').html($('#content').html() + span[0].outerHTML);
+					init();
+				});
+			}
+
+			function edit(id) {
+				editing = id;
+				$('#editModal').dialog('option', 'title', 'Editing Span: ' + editing);
+				$('#editModal').dialog('open');
+			}
+
+			$('button[id="add"]').click(function() {
+				$('div[id="addModal"]').dialog('open');
+			});
+
+			$('button[id="cler"]').click(function() {
+				$('div[id="content"]').html('');
+			});
+
+			$('button[id="fill"]').click(function() {
+				display(widgets);
+			});
+	</script>
+
+	</body>
 </html>

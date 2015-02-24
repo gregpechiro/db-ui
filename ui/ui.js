@@ -1,1 +1,0 @@
-[{"name":"User From","type":"form","resource":"/user","data":[{"name":"id","type":"Text"}]},{"name":"Job Form","resource":"/jobs","data":[{"name":"id","type":"Number"},{"name":"jobName","type":"text"},{"name":"finished","type":"boolean"}]}]
