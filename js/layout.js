@@ -1,98 +1,162 @@
-var obj = [
+var templates = [
     [{
-        name: "id",
-        value: "27819-878-7843912",
-        type: "text"
+        name: 'name',
+        value: 'Template 1',
+        type: 'text'
     }, {
-        name: "firstName",
-        value: "Scott",
-        type: "text"
-    }, {
-        name: "lastName",
-        value: "Cagno",
-        type: "text"
-    }, {
-        name: "email",
-        value: "scagno@example.com",
-        type: "email"
-    }, {
-        name: "phone",
-        value: "717-283-9278",
-        type: "phone"
-    }, {
-        name: "age",
-        value: 28,
-        type: "number"
-    }, {
-        name: "active",
-        value: true,
-        type: "text"
+        name: 'positions',
+        value: [{
+            width: 100
+        }],
+        type: 'list'
     }],
     [{
-        name: "id",
-        value: "18329-783-8432890",
-        type: "text"
+        name: 'name',
+        value: 'Template 2',
+        type: 'text'
     }, {
-        name: "firstName",
-        value: "Kayla",
-        type: "text"
+        name: 'positions',
+        value: [{
+            width: 100
+        }, {
+            width: 100
+        }],
+        type: 'list'
+    }],
+    [{
+        name: 'name',
+        value: 'Template 3',
+        type: 'text'
     }, {
-        name: "lastName",
-        value: "Cagno",
-        type: "text"
+        name: 'positions',
+        value: [{
+            width: 50
+        }, {
+            width: 50
+        }],
+        type: 'number'
+    }],
+    [{
+        name: 'name',
+        value: 'Template 4',
+        type: 'text'
     }, {
-        name: "email",
-        value: "kcagno@example.com",
-        type: "email"
+        name: 'positions',
+        value: [{
+            width: 100
+        }, {
+            width: 50
+        }, {
+            width: 50
+        }],
+        type: 'number'
+    }],
+    [{
+        name: 'name',
+        value: 'Template 5',
+        type: 'text'
     }, {
-        name: "phone",
-        value: "717-468-8292",
-        type: "phone"
-    }, {
-        name: "age",
-        value: 25,
-        type: "number"
-    }, {
-        name: "active",
-        value: false,
-        type: "text"
-    }]
+        name: 'positions',
+        value: [{
+            width: 100
+        }, {
+            width: 50
+        }, {
+            width: 50
+        }, {
+            width: 100
+        }],
+        type: 'number'
+    }],
 ];
 
-function titleCase(word) {
-    return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
+var content = [];
+var resource = "http://192.168.0.80:4567/ui";
+var tableHtml = '<table style="width:100%;"><thead><tr><th>Head 1</th><th>Head 2</th><th>Head 3</th><th>Head 4</th><th>Head 5</th><th>Head 6</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>'
+var formHtml = '<form><input style="width:100%;" placeholder="Input 1"><input style="width:100%;" placeholder="Input 2"><input style="width:100%;" placeholder="Input 3"><input style="width:100%;" placeholder="Input 4"><button style="width:100%;">Save</button></form>'
+function getData(handleData) {
+	$.ajax({
+		url: resource,
+		dataType:'json',
+		success:function(data) {
+			handleData(data);
+		},
+		error: function() {
+			console.log('error retrieving');
+		}
+	});
 }
 
-function generateForm(data) {
-    var form = ['<form id="form" method="post" action="#" class="forms">','<fieldset>','<legend>Form</legend>'];
-    for (var j = 0; j < data.length; j++) {
-        form.push('<label>' + titleCase(data[j].name));
-        form.push('<input id="' + data[j].name + '" type="' + data[j].type + '" name="' + data[j].name + '" value="' + data[j].value + '" class="width-100"/>');
-        form.push('</label>');
+function init() {
+    var options = '<option></option>'
+    for (var i = 0; i < templates.length; i++) {
+        options += '<option value="' + i + '">' + templates[i][0].value + '</option>';
     }
-    form.push('<input id="data" type="hidden" />');
-    form.push('<p><button type="submit" class="btn btn-blue width-100">Submit</button></p>');
-    form.push('</fieldset>');
-    form.push('</form>');
-    return form.join('');
+
+    $('select[id="templates"]').html(options);
+
+    getData(function(data) {
+        content = data;
+    });
 }
 
-function generateTable(data) {
-    var cols = ['<thead><tr>'];
-    for (var i = 0; i < data[0].length; i++) {
-        cols.push('<th>' + titleCase(data[0][i].name) + '</th>');
+function linkComponentSelect() {
+    $('select.choose').change(function() {
+        var index =+ this.value;
+        $('div[id="component' + this.parentNode.parentNode.id + '"]').html(filler(content[index].type));
+    });
+}
+
+function getComponentSelect() {
+    var s = '<label>Choose a Component</label><select class="choose"><option></option>';
+    for (var i = 0; i < content.length; i++) {
+        s += '<option value=' + i + '>' + content[i].name + '</option>';
     }
-    cols.push('</tr></thead>');
-    var rows = ['<tbody>'];
-    for (var x = 0; x < data.length; x++) {
-        rows.push('<tr>');
-        for (var y = 0; y < data[x].length; y++) {
-            rows.push('<td>' + data[x][y].value + '</td>');
+    s += '</select>';
+    return s;
+}
+
+
+function positions(index) {
+    var template = templates[index];
+    var positions = '<div class="units-row units-padding">';
+    var w = 0;
+    var innerSelect = getComponentSelect();
+    for (var i = 0; i < template[1].value.length; i++) {
+        var position = '<div id="' + i + '" style="border:1px solid black" class="unit-' + template[1].value[i].width + '">'+
+                '<h4>Position ' + (i+1) + ' : ' + innerSelect + '</h4>'+
+                '<div id="component' + i + '"></div>'+
+            '</div>';
+        if ((w + template[1].value[i].width) > 100) {
+            positions += '</div><div class="units-row units-padding">'
+            w = template[1].value[i].width;
+        } else {
+            w +=template[1].value[i].width;
         }
-        rows.push('</tr>');
+        positions += position;
     }
-    return ['<table id="table" class="table-bordered table-striped table-responsive">', cols.join(''), rows.join(''), '</table>'].join('');
+    position += '</div>';
+    $('div[id="positions"]').html(positions);
+    linkComponentSelect();
 }
 
-function getTable(){document.getElementById('table').innerHTML = generateTable(obj)};
-function getForm(){document.getElementById('form').innerHTML = generateForm(obj[1])};
+function filler(type) {
+    switch (type) {
+        case 'form':
+            return formHtml;
+            break;
+        case 'table':
+            return tableHtml;
+            break;
+    }
+}
+
+
+$(document).ready(function() {
+    init();
+    $('select[id="templates"]').change(function() {
+        positions($('select[id="templates"]').val());
+    });
+
+
+});

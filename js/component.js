@@ -1,6 +1,22 @@
+
 var content = [];
-var resource = "http://localhost:4567/ui";
-	
+var component;
+var resource = "http://192.168.0.80:4567/ui";
+var count = 1;
+var multi = false;
+var addOptionDiv = 'div[id="all-options"] div[id="add-option"]';
+
+function getUrlParameter(param) {
+    var pageURL = window.location.search.substring(1);
+    var urlVariables = pageURL.split('&');
+    for (var i = 0; i < urlVariables.length; i++) {
+        var parameterName = urlVariables[i].split('=');
+        if (parameterName[0] == param) {
+            return parameterName[1];
+        }
+    }
+}
+
 function getData(handleData) {
 	$.ajax({
 		url: resource,
@@ -9,7 +25,7 @@ function getData(handleData) {
 			handleData(data);
 		},
 		error: function() {
-			alert('error retrieving');
+			console.log('error retrieving');
 		}
 	});
 }
@@ -21,37 +37,53 @@ function saveData(data) {
 		type: 'post',
 		data: JSON.stringify(data),
 		success: function() {
-			alert('saved');
+			console.log('saved');
 		},
 		error: function() {
-			alert('error saving');
+			console.log('error saving');
 		}
 	});
 }
 
-getData(function(data) {
-	content = data;
-	return JSON.stringify(content);
-});
+function fill(index) {
+	var c = content[index];
+	$('input[id="name"]').val(c.name);
+	$('select[id="type"]').val(c.type);
+	$('input[id="resource"]').val(c.resource);
+	for (var i = 0; i < c.data.length; i++) {
+		$('div[id="option' + i + '"] input').val(c.data[i].name);
+		$('div[id="option' + i + '"] select').val(c.data[i].type);
+		if ((i + 1) < c.data.length) {
+			addOption();
+		}
+	}
+}
 
-
-var i = 1;
-var multi = false;
-var addOptionDiv = 'div[id="all-options"] div[id="add-option"]';
 // add input with delete button add placeholder after input set delete action
 function addOption() {
 	$(addOptionDiv).html($('div[id="next-option-input"]').html());
-	$(addOptionDiv).attr('id', 'option'+i);
-	// $('div[id="option' + i + '"] input').attr('id', 'option'+i);
-	$('div[id="option' + i + '"] button').attr('id', 'option'+i);
-	$('div[id="option' + i + '"]').after($('div[id="next-option-div"]').html());
-	$('button[id="option' + i + '"]').click(function() {
+	$(addOptionDiv).attr('id', 'option' + count);
+	$('div[id="option' + count + '"] input').attr('id', 'option' + count);
+	$('div[id="option' + count + '"] select').attr('id', 'option' + count);
+	$('div[id="option' + count + '"] button').attr('id', 'option' + count);
+	$('div[id="option' + count + '"]').after($('div[id="next-option-div"]').html());
+	$('button[id="option' + count + '"]').click(function() {
 		$('div[id="'+$(this).attr('id')+'"]').remove();
 	});
-	i++;
+	count++;
 }
 
 $(document).ready(function() {
+
+	getData(function(data) {
+		content = data;
+		component = getUrlParameter('component');
+		if (component != null) {
+			component =+ component;
+			fill(component);
+		}
+	});
+
 	$('button[id="add-option-button"]').click(function() {
 		addOption();
 	});
@@ -59,7 +91,7 @@ $(document).ready(function() {
 	$('button[id="save"]').click(function() {
 		var stuff = {};
 		stuff['name'] = $('input[id="name"]').val();
-		stuff['type'] = $('input[id="type"]').val();
+		stuff['type'] = $('select[id="type"]').val();
 		stuff['resource'] = $('input[id="resource"]').val();
 		var data = [];
 		var spans = $('div[id="all-options"] span[name="option"]');
@@ -70,7 +102,11 @@ $(document).ready(function() {
 			data.push(dat);
 		}
 		stuff['data'] = data;
-		content.push(stuff);
+		if (component != null) {
+			content[component] = stuff
+		} else {
+			content.push(stuff);
+		}
 		saveData(content);
 	});
 });
