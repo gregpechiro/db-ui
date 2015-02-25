@@ -1,0 +1,23 @@
+[
+    {
+        "id":1,
+        "name":"Greg",
+        "active": true,
+        "age": 28
+    }, {
+        "id":2,
+        "name":"Scott",
+        "active": true,
+        "age": 28
+    }, {
+        "id":3,
+        "name":"Rosalie",
+        "active": true,
+        "age": 29
+    }, {
+        "id":4,
+        "name":"Kayla",
+        "active": true,
+        "age": 24
+    }
+]

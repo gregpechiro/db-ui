@@ -1,73 +1,20 @@
 var templates = [
-    [{
-        name: 'name',
-        value: 'Template 1',
-        type: 'text'
+    {
+        name: 'Template 1',
+        positions: [100]
     }, {
-        name: 'positions',
-        value: [{
-            width: 100
-        }],
-        type: 'list'
-    }],
-    [{
-        name: 'name',
-        value: 'Template 2',
-        type: 'text'
+        name: 'Template 2',
+        positions: [100, 100]
     }, {
-        name: 'positions',
-        value: [{
-            width: 100
-        }, {
-            width: 100
-        }],
-        type: 'list'
-    }],
-    [{
-        name: 'name',
-        value: 'Template 3',
-        type: 'text'
+        name: 'Template 3',
+        positions: [50, 50]
     }, {
-        name: 'positions',
-        value: [{
-            width: 50
-        }, {
-            width: 50
-        }],
-        type: 'number'
-    }],
-    [{
-        name: 'name',
-        value: 'Template 4',
-        type: 'text'
+        name: 'Template 4',
+        positions: [100, 50, 50]
     }, {
-        name: 'positions',
-        value: [{
-            width: 100
-        }, {
-            width: 50
-        }, {
-            width: 50
-        }],
-        type: 'number'
-    }],
-    [{
-        name: 'name',
-        value: 'Template 5',
-        type: 'text'
-    }, {
-        name: 'positions',
-        value: [{
-            width: 100
-        }, {
-            width: 50
-        }, {
-            width: 50
-        }, {
-            width: 100
-        }],
-        type: 'number'
-    }],
+        name: 'Template 5',
+        positions: [100, 50, 50, 100]
+    }
 ];
 
 var content = [];
@@ -88,9 +35,9 @@ function getData(handleData) {
 }
 
 function init() {
-    var options = '<option></option>'
+    var options = '<option value="none">--- Choose a Template ---</option>'
     for (var i = 0; i < templates.length; i++) {
-        options += '<option value="' + i + '">' + templates[i][0].value + '</option>';
+        options += '<option value="' + i + '">' + templates[i].name + '</option>';
     }
 
     $('select[id="templates"]').html(options);
@@ -102,13 +49,17 @@ function init() {
 
 function linkComponentSelect() {
     $('select.choose').change(function() {
-        var index =+ this.value;
-        $('div[id="component' + this.parentNode.parentNode.id + '"]').html(filler(content[index].type));
+        if (this.value != 'none') {
+            var index =+ this.value;
+            $('div[id="component' + this.parentNode.parentNode.id + '"]').html(filler(content[index].type));
+        } else {
+            $('div[id="component' + this.parentNode.parentNode.id + '"]').html('');
+        }
     });
 }
 
 function getComponentSelect() {
-    var s = '<label>Choose a Component</label><select class="choose"><option></option>';
+    var s = '<select class="choose"><option value="none">--- Choose a Component ---</option>';
     for (var i = 0; i < content.length; i++) {
         s += '<option value=' + i + '>' + content[i].name + '</option>';
     }
@@ -120,18 +71,18 @@ function getComponentSelect() {
 function positions(index) {
     var template = templates[index];
     var positions = '<div class="units-row units-padding">';
-    var w = 0;
+    var currentWidth = 0;
     var innerSelect = getComponentSelect();
-    for (var i = 0; i < template[1].value.length; i++) {
-        var position = '<div id="' + i + '" style="border:1px solid black" class="unit-' + template[1].value[i].width + '">'+
+    for (var i = 0; i < template.positions.length; i++) {
+        var position = '<div id="' + i + '" style="border:1px solid black" class="unit-' + template.positions[i] + '">'+
                 '<h4>Position ' + (i+1) + ' : ' + innerSelect + '</h4>'+
                 '<div id="component' + i + '"></div>'+
             '</div>';
-        if ((w + template[1].value[i].width) > 100) {
+        if ((currentWidth + template.positions[i]) > 100) {
             positions += '</div><div class="units-row units-padding">'
-            w = template[1].value[i].width;
+            currentWidth = template.positions[i];
         } else {
-            w +=template[1].value[i].width;
+            currentWidth += template.positions[i];
         }
         positions += position;
     }
@@ -154,8 +105,24 @@ function filler(type) {
 
 $(document).ready(function() {
     init();
+
     $('select[id="templates"]').change(function() {
-        positions($('select[id="templates"]').val());
+        if ($('select[id="templates"]').val() != 'none') {
+            positions($('select[id="templates"]').val());
+        } else {
+            $('div[id="positions"]').html('');
+        }
+    });
+
+    $('button[id="save"]').click(function() {
+        var layout ={};
+        layout['name'] = $('input[id="layoutName"]').val();
+        layout['template'] = $('select[id="templates"]').val();
+        layout['components'] = [];
+        for (var i = 0; i < templates[layout['template']].positions.length; i++) {
+            layout['components'].push($('div[id="' + i + '"] select').val());
+        }
+        alert(JSON.stringify(layout));
     });
 
 
