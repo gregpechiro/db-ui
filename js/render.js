@@ -105,7 +105,7 @@ function getTable(component, id) {
         $.ajax({
             url: component.resource,
             success: function(data) {
-                $('div[id="render' + id + '"]').html(generateTable(data, component.data));
+                $('div[id="render' + id + '"]').html(generateTable(data, component));
             },
             error: function(data) {
                 console.log(data);
@@ -123,17 +123,19 @@ function getInfo(component, id) {
         $.ajax({
             url: component.resource,
             success: function(data) {
-                $('div[id="render' + id + '"]').html(generateInfo(data, component.data));
+                $('div[id="render' + id + '"]').html(generateInfo(data, component));
             },
             error: function(data) {
+                console.log('error');
                 console.log(data);
             }
         });
     }
 }
 
-function generateTable(data, fields) {
-    var table = '<table style="width:100%"><thead><tr>';
+function generateTable(data, component) {
+    var table = component.name + '<table class="width-100 table-bordered"><thead><tr>';
+    var fields = component.data;
     for (var i = 0; i < fields.length; i++) {
         table += '<th>' + capFirst(fields[i].name) + '</th>';
     }
@@ -155,24 +157,26 @@ function generateForm(component) {
     for (var i = 0; i < fields.length; i++) {
         switch (fields[i].type) {
             case 'text':
-                form += '<div class="unit-100">'+
-                        '<input class="width-100" type="text" name="'+
+                form +=
+                        '<label><input class="width-100" type="text" name="'+
                         fields[i].name+
-                        '" placeholder="' + capFirst(fields[i].name) + '"'+
-                        '</div>';
+                        '" placeholder="' + capFirst(fields[i].name) + '"></label>';
                 break;
             case 'number':
-                form += '<div class="unit-100">'+
-                        '<input class="width-100" type="number" name="'+
+                form +=
+                        '<label><input class="width-100" type="number" name="'+
                         fields[i].name+
-                        '" placeholder="' + capFirst(fields[i].name) + '"'+
-                        '</div>';
+                        '" placeholder="' + capFirst(fields[i].name) + '"></label>';
                 break;
             case 'boolean':
-                form += '<div class="unit-100">'+
-                        '<input type="checkbox" name="'+
-                        fields[i].name + '" value="true"> '+
-                        capFirst(fields[i].name) + '</div>';
+                form += '<label>'+ capFirst(fields[i].name) +
+                        '<input id="yes" type="radio" name="' +
+                        fields[i].name +
+                        '" value="yes"><label for="yes">Yes</label>' +
+                        '<input id="no" type="radio" name="' +
+                        fields[i].name +
+                        '" value="no"><label for="no">No</label>' +
+                        '</label>';
                 break;
         }
     }
@@ -181,11 +185,12 @@ function generateForm(component) {
     return form;
 }
 
-function generateInfo(data, fields) {
-    var info = '<table class="unit-100">';
+function generateInfo(data, component) {
+    var fields = component.data;
+    var info = component.name + '<table class="width-100 table-simple">';
     for (var i = 0; i < fields.length; i++) {
-        info += '<tr><td>' + capFirst(fields[i].name)+
-        '</td><td>' + data[fields[i].name] + '</td></tr>'
+        info += '<tr><td style="text-align: right;"><b>' + capFirst(fields[i].name) +
+        ': </b></td><td style="text-align: left;">' + data[fields[i].name] + '</td></tr>'
     }
     info += '</table>';
     return info;
