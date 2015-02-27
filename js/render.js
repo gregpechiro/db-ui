@@ -1,21 +1,21 @@
-var templates = [
-    {
-        name: 'Template 1',
-        positions: [100]
-    }, {
-        name: 'Template 2',
-        positions: [100, 100]
-    }, {
-        name: 'Template 3',
-        positions: [50, 50]
-    }, {
-        name: 'Template 4',
-        positions: [100, 50, 50]
-    }, {
-        name: 'Template 5',
-        positions: [100, 50, 50, 100]
-    }
-];
+// var templates = [
+//     {
+//         name: 'Template 1',
+//         positions: [100]
+//     }, {
+//         name: 'Template 2',
+//         positions: [100, 100]
+//     }, {
+//         name: 'Template 3',
+//         positions: [50, 50]
+//     }, {
+//         name: 'Template 4',
+//         positions: [100, 50, 50]
+//     }, {
+//         name: 'Template 5',
+//         positions: [100, 50, 50, 100]
+//     }
+// ];
 
 var layouts = [
     {
@@ -25,7 +25,7 @@ var layouts = [
     }, {
         name:'Layout 2',
         template: 2,
-        components:[0, 5]
+        components:[0, 4]
     }, {
         name:'Layout 3',
         template: 3,
@@ -33,18 +33,20 @@ var layouts = [
     }, {
         name:'Layout 4',
         template: 4,
-        components:[0, 2, 4, 1]
+        components:[0, 2, 1, 4]
     }
 ];
 
 
 
 var components = [];
-var resource = "http://192.168.0.80:4567/ui";
+var templates = [];
+var componentsUrl = "components.json";
+var templatesUrl = "templates.json";
 
-function getData(handleData) {
+function getData(url, handleData) {
 	$.ajax({
-		url: resource,
+		url: url,
 		dataType:'json',
 		success:function(data) {
 			handleData(data);
@@ -61,8 +63,11 @@ function init() {
         options += '<option value="' + i + '">' + layouts[i].name + '</option>';
     }
     $('select[id="layouts"]').html(options);
-    getData(function(data) {
+    getData(componentsUrl, function(data) {
         components = data;
+    });
+    getData(templatesUrl, function(data) {
+        templates = data;
     });
 }
 
@@ -152,7 +157,7 @@ function generateTable(data, component) {
 }
 
 function generateForm(component) {
-    var form = '<form method="post" action="' + component.resource + '">';
+    var form = component.name + '<form method="post" action="' + component.resource + '">';
     var fields = component.data;
     for (var i = 0; i < fields.length; i++) {
         switch (fields[i].type) {

@@ -1,0 +1,21 @@
+{
+
+	"$_TABLE_NAME" : {
+
+		"name" : "$_TABLE_NAME",
+		
+		"columns" : [
+
+			{ "name" : "$_COLUMN_NAME", "type" : "$_COLUMN_TYPE" }
+
+		],
+
+		"indexes" : [
+
+			"$_COLUMN_NAME" 
+
+		]
+
+	}
+
+}

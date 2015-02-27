@@ -1,5 +1,5 @@
 
-var content = [];
+var components = [];
 var component;
 var resource = "http://192.168.0.80:4567/ui";
 var count = 1;
@@ -17,9 +17,9 @@ function getUrlParameter(param) {
     }
 }
 
-function getData(handleData) {
+function getData(url, handleData) {
 	$.ajax({
-		url: resource,
+		url: url,
 		dataType:'json',
 		success:function(data) {
 			handleData(data);
@@ -46,7 +46,7 @@ function saveData(data) {
 }
 
 function fill(index) {
-	var c = content[index];
+	var c = components[index];
 	$('input[id="name"]').val(c.name);
 	$('select[id="type"]').val(c.type);
 	$('input[id="resource"]').val(c.resource);
@@ -75,8 +75,8 @@ function addOption() {
 
 $(document).ready(function() {
 
-	getData(function(data) {
-		content = data;
+	getData(resource, function(data) {
+		components = data;
 		component = getUrlParameter('component');
 		if (component != null) {
 			component =+ component;
@@ -103,10 +103,10 @@ $(document).ready(function() {
 		}
 		stuff['data'] = data;
 		if (component != null) {
-			content[component] = stuff
+			components[component] = stuff
 		} else {
-			content.push(stuff);
+			components.push(stuff);
 		}
-		saveData(content);
+        saveData(components);
 	});
 });

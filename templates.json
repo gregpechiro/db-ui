@@ -1,0 +1,18 @@
+[
+    {
+        "name": "Template 1",
+        "positions": [100]
+    }, {
+        "name": "Template 2",
+        "positions": [100, 100]
+    }, {
+        "name": "Template 3",
+        "positions": [50, 50]
+    }, {
+        "name": "Template 4",
+        "positions": [100, 50, 50]
+    }, {
+        "name": "Template 5",
+        "positions": [100, 50, 50, 100]
+    }
+]

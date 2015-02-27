@@ -1,0 +1,80 @@
+[
+    {
+        "name": "User Table 2",
+        "type": "table",
+        "resource": "user.json",
+        "data": [
+            {
+                "name": "id",
+                "type": "number"
+            }, {
+                "name": "name",
+                "type": "text"
+            }, {
+                "name": "active",
+                "type": "boolean"
+            }
+        ]
+    }, {
+        "name": "User Info",
+        "type": "info",
+        "resource": "user1.json",
+        "data": [
+            {
+                "name": "age",
+                "type": "number"
+            }, {
+                "name": "name",
+                "type": "text"
+            }
+        ]
+    }, {
+        "name": "User Form 2",
+        "type": "form",
+        "resource": "user.json",
+        "data": [
+            {
+                "name": "name",
+                "type": "text"
+            }, {
+                "name": "active",
+                "type": "boolean"
+            }
+        ]
+    }, {
+        "name": "User Form",
+        "type": "form",
+        "resource": "user.json",
+        "data": [
+            {
+                "name": "name",
+                "type": "text"
+            }, {
+                "name": "active",
+                "type": "boolean"
+            }, {
+                "name": "age",
+                "type": "number"
+            }
+        ]
+    }, {
+        "name": "User Table",
+        "type": "table",
+        "resource": "user.json",
+        "data": [
+            {
+                "name": "id",
+                "type": "number"
+            }, {
+                "name": "name",
+                "type": "text"
+            }, {
+                "name": "active",
+                "type": "boolean"
+            }, {
+                "name": "age",
+                "type": "number"
+            }
+        ]
+    }
+]
