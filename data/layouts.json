@@ -1,0 +1,38 @@
+[
+    {
+        "globalResource": "data/user.json",
+        "name":"Layout 1",
+        "template": 1,
+        "components":[
+            0, {
+                "name": "Non Component",
+                "type": "table",
+                "resource": "global",
+                "data": [
+                    {
+                        "name": "id",
+                        "type": "number"
+                    }, {
+                        "name": "name",
+                        "type": "text"
+                    }, {
+                        "name": "active",
+                        "type": "boolean"
+                    }
+                ]
+            }
+        ]
+    }, {
+        "name":"Layout 2",
+        "template": 2,
+        "components":[0, 4]
+    }, {
+        "name":"Layout 3",
+        "template": 3,
+        "components":[3, 2 ,4]
+    }, {
+        "name":"Layout 4",
+        "template": 4,
+        "components":[0, 2, 1, 4]
+    }
+]

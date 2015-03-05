@@ -2,7 +2,7 @@
     {
         "name": "User Table 2",
         "type": "table",
-        "resource": "user.json",
+        "resource": "data/user.json",
         "data": [
             {
                 "name": "id",
@@ -18,7 +18,7 @@
     }, {
         "name": "User Info",
         "type": "info",
-        "resource": "user1.json",
+        "resource": "data/user1.json",
         "data": [
             {
                 "name": "age",
@@ -31,7 +31,7 @@
     }, {
         "name": "User Form 2",
         "type": "form",
-        "resource": "user.json",
+        "resource": "data/user.json",
         "data": [
             {
                 "name": "name",
@@ -44,7 +44,7 @@
     }, {
         "name": "User Form",
         "type": "form",
-        "resource": "user.json",
+        "resource": "data/user.json",
         "data": [
             {
                 "name": "name",
@@ -60,7 +60,7 @@
     }, {
         "name": "User Table",
         "type": "table",
-        "resource": "user.json",
+        "resource": "data/user.json",
         "data": [
             {
                 "name": "id",

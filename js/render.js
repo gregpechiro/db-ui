@@ -1,48 +1,32 @@
-// var templates = [
+
+// var layouts = [
 //     {
-//         name: 'Template 1',
-//         positions: [100]
+//         name:'Layout 1',
+//         template: 1,
+//         components:[0, 2]
 //     }, {
-//         name: 'Template 2',
-//         positions: [100, 100]
+//         name:'Layout 2',
+//         template: 2,
+//         components:[0, 4]
 //     }, {
-//         name: 'Template 3',
-//         positions: [50, 50]
+//         name:'Layout 3',
+//         template: 3,
+//         components:[3, 2, 4]
 //     }, {
-//         name: 'Template 4',
-//         positions: [100, 50, 50]
-//     }, {
-//         name: 'Template 5',
-//         positions: [100, 50, 50, 100]
+//         name:'Layout 4',
+//         template: 4,
+//         components:[0, 2, 1, 4]
 //     }
 // ];
 
-var layouts = [
-    {
-        name:'Layout 1',
-        template: 1,
-        components:[0, 2]
-    }, {
-        name:'Layout 2',
-        template: 2,
-        components:[0, 4]
-    }, {
-        name:'Layout 3',
-        template: 3,
-        components:[3, 2, 4]
-    }, {
-        name:'Layout 4',
-        template: 4,
-        components:[0, 2, 1, 4]
-    }
-];
 
-
-
+var layouts = [];
 var components = [];
 var templates = [];
-var componentsUrl = "components.json";
-var templatesUrl = "templates.json";
+var componentsUrl = "data/components.json";
+var templatesUrl = "data/templates.json";
+var layoutsUrl = "data/layouts.json";
+var globalData;
 
 function getData(url, handleData) {
 	$.ajax({
@@ -51,18 +35,21 @@ function getData(url, handleData) {
 		success:function(data) {
 			handleData(data);
 		},
-		error: function() {
-			console.log('error retrieving');
+		error: function(data) {
+			console.log(data);
 		}
 	});
 }
 
 function init() {
-    var options = '<option value="none">--- Choose a Layout ---</option>'
-    for (var i = 0; i < layouts.length; i++) {
-        options += '<option value="' + i + '">' + layouts[i].name + '</option>';
-    }
-    $('select[id="layouts"]').html(options);
+    getData(layoutsUrl, function(data) {
+        layouts = data;
+        var options = '<option value="none">--- Choose a Layout ---</option>'
+        for (var i = 0; i < layouts.length; i++) {
+            options += '<option value="' + i + '">' + layouts[i].name + '</option>';
+        }
+        $('select[id="layouts"]').html(options);
+    });
     getData(componentsUrl, function(data) {
         components = data;
     });
@@ -86,21 +73,43 @@ function renderLayout(index) {
         render += '<div id="render' + i + '" style="border:1px solid black" class="unit-' + positions[i] + '"></div>'
     }
     $('div[id="render"]').html(render);
-    fill(layout.components)
+    if (layout.globalResource != "" && layout.globalResource != null) {
+        getData(layout.globalResource, function(data) {
+            globalData = data;
+            fill(layout.components);
+        });
+    } else {
+        fill(layout.components);
+    }
 }
 
 function fill(layoutComponents) {
     for (var i = 0; i < layoutComponents.length; i++) {
-        var component = components[layoutComponents[i]];
-        switch (component.type) {
-            case 'table':
-                getTable(component, i);
-                break;
-            case 'form':
-                getForm(component, i);
-                break;
-            case 'info':
-                getInfo(component, i);
+        var component;
+        if (typeof layoutComponents[i] != "number") {
+            component = layoutComponents[i];
+            switch (component.type) {
+                case 'table':
+                    $('div[id="render' + i + '"]').html(generateTable(globalData, component));
+                    break;
+                case 'form':
+                    $('div[id="render' + i + '"]').html(generateForm(component));
+                    break;
+                case 'info':
+                    $('div[id="render' + i + '"]').html(generateInfo(globalData, component));
+            }
+        } else {
+            component = components[layoutComponents[i]];
+            switch (component.type) {
+                case 'table':
+                    getTable(component, i);
+                    break;
+                case 'form':
+                    getForm(component, i);
+                    break;
+                case 'info':
+                    getInfo(component, i);
+            }
         }
     }
 }
