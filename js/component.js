@@ -1,7 +1,7 @@
 
 var components = [];
 var component;
-var resource = "http://192.168.0.80:4567/ui";
+var resource = "data/components.json";
 var count = 1;
 var multi = false;
 var addOptionDiv = 'div[id="all-options"] div[id="add-option"]';
@@ -94,19 +94,22 @@ $(document).ready(function() {
 		stuff['type'] = $('select[id="type"]').val();
 		stuff['resource'] = $('input[id="resource"]').val();
 		var data = [];
-		var spans = $('div[id="all-options"] span[name="option"]');
-		for (var i = 0; i < spans.length; i++) {
-			var dat = {};
-			dat['name'] = spans[i].children[0].value;
-			dat['type'] = spans[i].children[1].value;
-			data.push(dat);
-		}
-		stuff['data'] = data;
-		if (component != null) {
+        if (stuff['type'] != 'iframe') {
+            var spans = $('div[id="all-options"] span[name="option"]');
+            for (var i = 0; i < spans.length; i++) {
+                var dat = {};
+                dat['name'] = spans[i].children[0].value;
+                dat['type'] = spans[i].children[1].value;
+                data.push(dat);
+            }
+        }
+        stuff['data'] = data;
+        if (component != null) {
 			components[component] = stuff
 		} else {
 			components.push(stuff);
 		}
-        saveData(components);
+        //saveData(components);
+        alert(JSON.stringify(stuff));
 	});
 });

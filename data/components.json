@@ -8,7 +8,7 @@
                 "name": "id",
                 "type": "number"
             }, {
-                "name": "name",
+                "name": "firstName",
                 "type": "text"
             }, {
                 "name": "active",
@@ -24,7 +24,7 @@
                 "name": "age",
                 "type": "number"
             }, {
-                "name": "name",
+                "name": "firstName",
                 "type": "text"
             }
         ]
@@ -34,7 +34,7 @@
         "resource": "data/user.json",
         "data": [
             {
-                "name": "name",
+                "name": "firstName",
                 "type": "text"
             }, {
                 "name": "active",
@@ -47,7 +47,7 @@
         "resource": "data/user.json",
         "data": [
             {
-                "name": "name",
+                "name": "firstName",
                 "type": "text"
             }, {
                 "name": "active",
@@ -66,7 +66,7 @@
                 "name": "id",
                 "type": "number"
             }, {
-                "name": "name",
+                "name": "firstName",
                 "type": "text"
             }, {
                 "name": "active",
@@ -76,5 +76,42 @@
                 "type": "number"
             }
         ]
+    }, {
+        "name": "User Personal Info",
+        "type": "info",
+        "resource": "global",
+        "data": [
+            {
+                "name": "firstName",
+                "type": "text"
+            }, {
+                "name": "lastName",
+                "type": "text"
+            }, {
+                "name": "email",
+                "type": "text"
+            }
+        ]
+    }, {
+        "name": "User System Info",
+        "type": "info",
+        "resource": "global",
+        "data": [
+            {
+                "name": "id",
+                "type": "number"
+            }, {
+                "name": "active",
+                "type": "boolean"
+            }, {
+                "name": "email",
+                "type": "text"
+            }
+        ]
+    }, {
+        "name": "Browser Info",
+        "type": "iframe",
+        "resource": "http://localhost/browserTest",
+        "data": []
     }
 ]

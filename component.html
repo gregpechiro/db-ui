@@ -39,6 +39,7 @@
     						<option name="type" value="form">Form</option>
     						<option name="type" value="table">Table</option>
 							<option name="type" value="info">Info</option>
+							<option name="type" value="iframe">IFrame</option>
     					</select>
 						<input id="resource" type="text" name="resource" class="width-30" placeholder="/resource">
 					</fieldset>
@@ -46,21 +47,21 @@
     			<div class="unit-40">
 					<fieldset>
 						<legend>Add/Edit Fields</legend>
-						<div id="all-options">
-							<div id="option0">
-								<span name="option">
-									<input id="option0" type="text" name="name" class="width-50" placeholder="Name">
-									<select id="option0" class="width-25">
-										<option value="text">Text</option>
-										<option value="number">Number</option>
-										<option value="boolean">Boolean</option>
-									</select>
-								</span>
+							<div id="all-options">
+								<div id="option0">
+									<span name="option">
+										<input id="option0" type="text" name="name" class="width-50" placeholder="Name">
+										<select id="option0" class="width-25">
+											<option value="text">Text</option>
+											<option value="number">Number</option>
+											<option value="boolean">Boolean</option>
+										</select>
+									</span>
+								</div>
+								<div id="add-option"></div>
+								<button id="add-option-button" class="btn width-50">Add Option</button>
 							</div>
-							<div id="add-option"></div>
-							<button id="add-option-button" class="btn width-50">Add Option</button>
-						</div>
-						<button id="save" name="save" class="btn btn-green">Save</button>
+							<button id="save" name="save" class="btn btn-green width-50">Save</button>
 					</fieldset>
 				</div>
 			</div>

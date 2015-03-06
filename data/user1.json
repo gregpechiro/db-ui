@@ -1,6 +1,8 @@
 {
     "id":1,
-    "name":"Greg",
+    "firstName":"Greg",
+    "lastName":"Pechiro",
     "active": true,
-    "age": 28
+    "age": 28,
+    "email":"gregpechiro@yahoo.com"
 }

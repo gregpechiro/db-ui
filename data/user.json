@@ -1,23 +1,31 @@
 [
     {
         "id":1,
-        "name":"Greg",
+        "firstName":"Greg",
+        "lastName": "Pechiro",
         "active": true,
-        "age": 28
+        "age": 28,
+        "email": "gregpechiro@gmail.com"
     }, {
         "id":2,
-        "name":"Scott",
+        "firstName":"Scott",
+        "lastName": "Cagno",
         "active": true,
-        "age": 28
+        "age": 28,
+        "email": "scottiecagno@gmail.com"
     }, {
         "id":3,
-        "name":"Rosalie",
+        "firstName":"Rosalie",
+        "lastName": "Pechiro",
         "active": true,
-        "age": 29
+        "age": 29,
+        "email": "rosaliepechiro@gmail.com"
     }, {
         "id":4,
-        "name":"Kayla",
+        "firstName":"Kayla",
+        "lastName": "Cagno",
         "active": true,
-        "age": 24
+        "age": 24,
+        "email": "kaylacagno@gmail.com"
     }
 ]

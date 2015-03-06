@@ -1,25 +1,4 @@
 
-// var layouts = [
-//     {
-//         name:'Layout 1',
-//         template: 1,
-//         components:[0, 2]
-//     }, {
-//         name:'Layout 2',
-//         template: 2,
-//         components:[0, 4]
-//     }, {
-//         name:'Layout 3',
-//         template: 3,
-//         components:[3, 2, 4]
-//     }, {
-//         name:'Layout 4',
-//         template: 4,
-//         components:[0, 2, 1, 4]
-//     }
-// ];
-
-
 var layouts = [];
 var components = [];
 var templates = [];
@@ -85,37 +64,27 @@ function renderLayout(index) {
 
 function fill(layoutComponents) {
     for (var i = 0; i < layoutComponents.length; i++) {
-        var component;
-        if (typeof layoutComponents[i] != "number") {
-            component = layoutComponents[i];
-            switch (component.type) {
-                case 'table':
-                    $('div[id="render' + i + '"]').html(generateTable(globalData, component));
-                    break;
-                case 'form':
-                    $('div[id="render' + i + '"]').html(generateForm(component));
-                    break;
-                case 'info':
-                    $('div[id="render' + i + '"]').html(generateInfo(globalData, component));
-            }
-        } else {
-            component = components[layoutComponents[i]];
-            switch (component.type) {
-                case 'table':
-                    getTable(component, i);
-                    break;
-                case 'form':
-                    getForm(component, i);
-                    break;
-                case 'info':
-                    getInfo(component, i);
-            }
+        var component = components[layoutComponents[i]];
+        switch (component.type) {
+            case 'table':
+                getTable(component, i);
+                break;
+            case 'form':
+                getForm(component, i);
+                break;
+            case 'info':
+                getInfo(component, i);
+				break;
+			case 'iframe':
+				getIframe(component, i);
         }
     }
 }
 
 function getTable(component, id) {
-    if (component.resource != '' || component.resource != null) {
+    if (component.resource == 'global') {
+		$('div[id="render' + id + '"]').html(generateTable(globalData, component));
+	} else if (component.resource != '' && component.resource != null) {
         $.ajax({
             url: component.resource,
             success: function(data) {
@@ -133,7 +102,9 @@ function getForm(component, id) {
 }
 
 function getInfo(component, id) {
-    if (component.resource != '' || component.resource != null) {
+	if (component.resource == 'global') {
+		$('div[id="render' + id + '"]').html(generateInfo(globalData, component));
+	} else if (component.resource != '' && component.resource != null) {
         $.ajax({
             url: component.resource,
             success: function(data) {
@@ -141,10 +112,13 @@ function getInfo(component, id) {
             },
             error: function(data) {
                 console.log('error');
-                console.log(data);
             }
         });
     }
+}
+
+function getIframe(component, id) {
+    $('div[id="render' + id + '"]').html(generateIframe(component));
 }
 
 function generateTable(data, component) {
@@ -208,6 +182,10 @@ function generateInfo(data, component) {
     }
     info += '</table>';
     return info;
+}
+
+function generateIframe(component) {
+	return component.name + '<iframe width="100%" src="' + component.resource + '"></iframe>';
 }
 
 function capFirst(string) {

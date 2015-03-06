@@ -1,6 +1,6 @@
 
 var content = [];
-var resource = "http://192.168.0.80:4567/ui";
+var resource = "data/components.json";
 
 function getData(handleData) {
 	$.ajax({
