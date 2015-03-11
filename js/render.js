@@ -125,7 +125,7 @@ function generateTable(data, component) {
     var table = component.name + '<table class="width-100 table-bordered"><thead><tr>';
     var fields = component.data;
     for (var i = 0; i < fields.length; i++) {
-        table += '<th>' + capFirst(fields[i].name) + '</th>';
+        table += '<th>' + title(fields[i].name) + '</th>';
     }
     table += '</tr></thead><tbody>';
     for (var i = 0; i < data.length; i++) {
@@ -148,16 +148,16 @@ function generateForm(component) {
                 form +=
                         '<label><input class="width-100" type="text" name="'+
                         fields[i].name+
-                        '" placeholder="' + capFirst(fields[i].name) + '"></label>';
+                        '" placeholder="' + title(fields[i].name) + '"></label>';
                 break;
             case 'number':
                 form +=
                         '<label><input class="width-100" type="number" name="'+
                         fields[i].name+
-                        '" placeholder="' + capFirst(fields[i].name) + '"></label>';
+                        '" placeholder="' + title(fields[i].name) + '"></label>';
                 break;
             case 'boolean':
-                form += '<label>'+ capFirst(fields[i].name) +
+                form += '<label>'+ title(fields[i].name) +
                         '<input id="yes" type="radio" name="' +
                         fields[i].name +
                         '" value="yes"><label for="yes">Yes</label>' +
@@ -177,7 +177,7 @@ function generateInfo(data, component) {
     var fields = component.data;
     var info = component.name + '<table class="width-100 table-simple">';
     for (var i = 0; i < fields.length; i++) {
-        info += '<tr><td style="text-align: right;"><b>' + capFirst(fields[i].name) +
+        info += '<tr><td style="text-align: right;"><b>' + title(fields[i].name) +
         ': </b></td><td style="text-align: left;">' + data[fields[i].name] + '</td></tr>'
     }
     info += '</table>';
@@ -186,10 +186,6 @@ function generateInfo(data, component) {
 
 function generateIframe(component) {
 	return component.name + '<iframe width="100%" src="' + component.resource + '"></iframe>';
-}
-
-function capFirst(string) {
-    return string[0].toUpperCase() + string.substring(1);
 }
 
 $(document).ready(function() {

@@ -21,8 +21,21 @@
     				Component Editor
     			</nav>
     			<nav class="navbar navbar-right">
-    				<a href="/db-ui/components.html" class="btn btn-small">All Components</a>
-    				<a href="/db-ui/layout.html" class="btn btn-small">Layout Editor</a>
+					<select class="navSelect">
+						<option value="none">Template</option>
+						<option value="/db-ui/template.html">Add Template</option>
+						<option value="/db-ui/templates.html">All Templates</option>
+					</select>
+					<select class="navSelect">
+						<option value="none">Component</option>
+						<option value="/db-ui/component.html">Add Component</option>
+						<option value="/db-ui/components.html">All Components</option>
+					</select>
+					<select class="navSelect">
+						<option value="none">Layout</option>
+						<option value="/db-ui/layout.html">Add Layout</option>
+						<option value="/db-ui/layouts.html">All Layouts</option>
+					</select>
     			</nav>
 			</header>
 		</section>
@@ -88,6 +101,7 @@
 		<!-- scripts  -->
 		<section id="script">
 			<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+			<script src="js/global.js"></script>
 			<script src="js/component.js"></script>
 		</section>
 		<!-- scripts  -->

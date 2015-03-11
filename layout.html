@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<title>Components</title>
+		<title>Layout</title>
 		<meta charset="utf-8" />
     	<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/kube/3.0.2/css/kube.min.css">
@@ -18,11 +18,24 @@
 		<section id="header">
 			<header class="group default">
     			<nav class="navbar navbar-left">
-    				Component Editor
+    				Layut Editor
     			</nav>
     			<nav class="navbar navbar-right">
-    				<a href="/db-ui/component.html" class="btn btn-small">Add / Edit Component</a>
-					<a href="/db-ui/components.html" class="btn btn-small">All Components</a>
+					<select class="navSelect">
+						<option value="none">Template</option>
+						<option value="/db-ui/template.html">Add Template</option>
+						<option value="/db-ui/templates.html">All Templates</option>
+					</select>
+					<select class="navSelect">
+						<option value="none">Component</option>
+						<option value="/db-ui/component.html">Add Component</option>
+						<option value="/db-ui/components.html">All Components</option>
+					</select>
+					<select class="navSelect">
+						<option value="none">Layout</option>
+						<option value="/db-ui/layout.html">Add Layout</option>
+						<option value="/db-ui/layouts.html">All Layouts</option>
+					</select>
     			</nav>
 			</header>
 		</section>
@@ -47,6 +60,7 @@
 		<!-- scripts  -->
 		<section id="script">
 			<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+			<script src="js/global.js"></script>
 			<script src="js/layout.js"></script>
 		</section>
 		<!-- scripts  -->
