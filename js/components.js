@@ -1,5 +1,5 @@
 
-var resource = "data/components.json";
+var resource = "http://localhost:8080/view/component";
 
 function getData(handleData) {
 	$.ajax({
@@ -15,9 +15,10 @@ function getData(handleData) {
 }
 
 function init(data) {
-	content = data;
-	var table = generateTable(data);
-	$('div[id="table"]').html(table);
+	getData(function(data) {
+		var table = generateTable(data);
+		$('div[id="table"]').html(table);
+	});
 }
 
 function generateTable(data) {
@@ -33,7 +34,7 @@ function generateTable(data) {
 			table += 'Type: ' + data[row].data[i].type + '<br>';
 		}
 		table += '</td>'
-		table += '<td><a href="/db-ui/component.html?component=' + row + '">Edit</a></td></tr>';
+		table += '<td><a href="/db-ui/component.html?component=' + data[row].id + '">Edit</a></td></tr>';
 	}
 	table += '</tbody></table>';
 	return table;
@@ -41,7 +42,6 @@ function generateTable(data) {
 
 $(document).ready(function() {
 
-    getData(function(data) {
-        init(data);
-    });
+	init();
+	
 });

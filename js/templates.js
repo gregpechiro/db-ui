@@ -1,5 +1,5 @@
 
-var resource = "data/templates.json";
+var resource = "http://localhost:8080/view/template";
 
 function getData(handleData) {
 	$.ajax({
@@ -14,10 +14,11 @@ function getData(handleData) {
 	});
 }
 
-function init(data) {
-	content = data;
-	var table = generateTable(data);
-	$('div[id="table"]').html(table);
+function init() {
+	getData(function(data) {
+		var table = generateTable(data);
+		$('div[id="table"]').html(table);
+    });
 }
 
 function generateTable(data) {
@@ -26,7 +27,7 @@ function generateTable(data) {
 	for(var row in data) {
 		table += '<tr><td>' + data[row].name + '</td>';
 		table += '<td>' + data[row].positions + '</td>';
-		table += '<td><a href="/db-ui/template.html?template=' + row + '">Edit</a></td></tr>';
+		table += '<td><a href="/db-ui/template.html?template=' + data[row].id + '">Edit</a></td></tr>';
 	}
 	table += '</tbody></table>';
 	return table;
@@ -34,7 +35,5 @@ function generateTable(data) {
 
 $(document).ready(function() {
 
-    getData(function(data) {
-        init(data);
-    });
+	init();
 });

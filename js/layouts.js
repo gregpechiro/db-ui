@@ -1,5 +1,5 @@
 
-var resource = "data/layouts.json";
+var resource = "http://localhost:8080/view/layout";
 
 function getData(handleData) {
 	$.ajax({
@@ -15,9 +15,10 @@ function getData(handleData) {
 }
 
 function init(data) {
-	content = data;
-	var table = generateTable(data);
-	$('div[id="table"]').html(table);
+	getData(function(data) {
+		var table = generateTable(data);
+		$('div[id="table"]').html(table);
+	});
 }
 
 function generateTable(data) {
@@ -28,7 +29,7 @@ function generateTable(data) {
 		table += '<td>' + data[row].globalResource + '</td>';
 		table += '<td>' + data[row].template + '</td>';
 		table += '<td>' + data[row].components + '</td>';
-		table += '<td><a href="/db-ui/layout.html?layout=' + row + '">Edit</a></td></tr>';
+		table += '<td><a href="/db-ui/layout.html?layout=' + data[row].id + '">Edit</a></td></tr>';
 	}
 	table += '</tbody></table>';
 	return table;
@@ -36,8 +37,6 @@ function generateTable(data) {
 
 $(document).ready(function() {
 
-    getData(function(data) {
-        init(data);
-    });
+	init();
 
 });

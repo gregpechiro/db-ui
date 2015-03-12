@@ -1,7 +1,5 @@
 
-var components = [];
-var component;
-var resource = "data/components.json";
+var resource = "http://localhost:8080/view/component";
 var count = 1;
 var multi = false;
 var addOptionDiv = 'div[id="all-options"] div[id="add-option"]';
@@ -30,23 +28,39 @@ function getData(url, handleData) {
 	});
 }
 
-function saveData(data) {
-	console.log(data);
-	$.ajax({
-		url: resource,
-		type: 'post',
-		data: JSON.stringify(data),
-		success: function() {
-			console.log('saved');
-		},
-		error: function() {
-			console.log('error saving');
-		}
-	});
+function save() {
+    var component = {};
+    component['id'] = $('input[id="id"]').val();
+    component['name'] = $('input[id="name"]').val();
+    component['type'] = $('select[id="type"]').val();
+    component['resource'] = $('input[id="resource"]').val();
+    var data = [];
+    if (component['type'] != 'iframe') {
+        var spans = $('div[id="all-options"] span[name="option"]');
+        for (var i = 0; i < spans.length; i++) {
+            var dat = {};
+            dat['name'] = spans[i].children[0].value;
+            dat['type'] = spans[i].children[1].value;
+            data.push(dat);
+        }
+    }
+    component['data'] = data;
+    $.ajax({
+          type: "POST",
+          url: 'http://localhost:8080/view/component',
+          data: JSON.stringify(component),
+        contentType: "application/json; charset=utf-8",
+          success: function() {
+            console.log('success');
+        },
+        error: function() {
+            console.log('error');
+        }
+    });
 }
 
-function fill(index) {
-	var c = components[index];
+function fill(c) {
+    $('input[id="id"]').val(c.id);
 	$('input[id="name"]').val(c.name);
 	$('select[id="type"]').val(c.type);
 	$('input[id="resource"]').val(c.resource);
@@ -73,43 +87,25 @@ function addOption() {
 	count++;
 }
 
-$(document).ready(function() {
+function init() {
+    var componentId = getUrlParameter('component');
+    if (componentId != null) {
+        getData(resource + '/' + componentId, function(data) {
+            fill(data)
+        });
+    }
+}
 
-	getData(resource, function(data) {
-		components = data;
-		component = getUrlParameter('component');
-		if (component != null) {
-			component =+ component;
-			fill(component);
-		}
-	});
+$(document).ready(function() {
 
 	$('button[id="add-option-button"]').click(function() {
 		addOption();
 	});
 
 	$('button[id="save"]').click(function() {
-		var stuff = {};
-		stuff['name'] = $('input[id="name"]').val();
-		stuff['type'] = $('select[id="type"]').val();
-		stuff['resource'] = $('input[id="resource"]').val();
-		var data = [];
-        if (stuff['type'] != 'iframe') {
-            var spans = $('div[id="all-options"] span[name="option"]');
-            for (var i = 0; i < spans.length; i++) {
-                var dat = {};
-                dat['name'] = spans[i].children[0].value;
-                dat['type'] = spans[i].children[1].value;
-                data.push(dat);
-            }
-        }
-        stuff['data'] = data;
-        if (component != null) {
-			components[component] = stuff
-		} else {
-			components.push(stuff);
-		}
-        //saveData(components);
-        alert(JSON.stringify(stuff));
+        save();
 	});
+
+    init();
+
 });

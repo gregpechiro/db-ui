@@ -1,21 +1,21 @@
 
 var layouts = [];
-var components = [];
-var templates = [];
-var componentsUrl = "data/components.json";
-var templatesUrl = "data/templates.json";
-var layoutsUrl = "data/layouts.json";
+//var components = [];
+//var templates = [];
+var componentsUrl = "http://localhost:8080/view/component";
+var templatesUrl = "http://localhost:8080/view/template";
+var layoutsUrl = "http://localhost:8080/view/layout";
 var globalData;
 
-function getData(url, handleData) {
+function getData(url, handleData, count) {
 	$.ajax({
 		url: url,
 		dataType:'json',
 		success:function(data) {
-			handleData(data);
+			handleData(data, count);
 		},
 		error: function(data) {
-			console.log(data);
+			console.log('error');
 		}
 	});
 }
@@ -29,55 +29,54 @@ function init() {
         }
         $('select[id="layouts"]').html(options);
     });
-    getData(componentsUrl, function(data) {
-        components = data;
-    });
-    getData(templatesUrl, function(data) {
-        templates = data;
-    });
 }
 
 function renderLayout(index) {
     var layout = layouts[index];
-    var positions = templates[layout['template']].positions;
-    var render = '<div class="units-row units-padding">';
-    var currentWidth = 0;
-    for (var i = 0; i < positions.length; i++) {
-        if ((currentWidth + positions[i]) > 100) {
-            render += '</div><div class="units-row units-padding">';
-            currentWidth = positions[i];
-        } else {
-            currentWidth += positions[i];
-        }
-        render += '<div id="render' + i + '" style="border:1px solid black" class="unit-' + positions[i] + '"></div>'
-    }
-    $('div[id="render"]').html(render);
-    if (layout.globalResource != "" && layout.globalResource != null) {
-        getData(layout.globalResource, function(data) {
-            globalData = data;
-            fill(layout.components);
-        });
-    } else {
-        fill(layout.components);
-    }
+	getData(templatesUrl + '/' + layout.template, function(template) {
+    	var positions = template.positions;
+    	var render = '<div class="units-row units-padding">';
+    	var currentWidth = 0;
+    	for (var i = 0; i < positions.length; i++) {
+        	if ((currentWidth + positions[i]) > 100) {
+            	render += '</div><div class="units-row units-padding">';
+            	currentWidth = positions[i];
+        	} else {
+            	currentWidth += positions[i];
+        	}
+        	render += '<div id="render' + i + '" style="border:1px solid black" class="unit-' + positions[i] + '"></div>'
+    	}
+    	$('div[id="render"]').html(render);
+    	if (layout.globalResource != "" && layout.globalResource != null) {
+        	getData(layout.globalResource, function(data) {
+            	globalData = data;
+            	fill(layout.components);
+        	});
+    	} else {
+        	fill(layout.components);
+    	}
+	});
 }
 
 function fill(layoutComponents) {
-    for (var i = 0; i < layoutComponents.length; i++) {
-        var component = components[layoutComponents[i]];
-        switch (component.type) {
-            case 'table':
-                getTable(component, i);
-                break;
-            case 'form':
-                getForm(component, i);
-                break;
-            case 'info':
-                getInfo(component, i);
-				break;
-			case 'iframe':
-				getIframe(component, i);
-        }
+    for (var j = 0; j < layoutComponents.length; j++) {
+		count = j;
+		getData(componentsUrl + '/' + layoutComponents[j], function(component, j) {
+        	switch (component.type) {
+            	case 'table':
+                	getTable(component, j);
+                	break;
+            	case 'form':
+                	getForm(component, j);
+                	break;
+            	case 'info':
+                	getInfo(component, j);
+					break;
+				case 'iframe':
+					getIframe(component, j);
+					break;
+        	}
+		}, j);
     }
 }
 
@@ -91,14 +90,15 @@ function getTable(component, id) {
                 $('div[id="render' + id + '"]').html(generateTable(data, component));
             },
             error: function(data) {
-                console.log(data);
+                console.log('error');
             }
         });
     }
 }
 
 function getForm(component, id) {
-    $('div[id="render' + id + '"]').html(generateForm(component));
+    $('div[id="render' + id + '"]').html(generateForm(component, id));
+	setup(id);
 }
 
 function getInfo(component, id) {
@@ -139,8 +139,8 @@ function generateTable(data, component) {
     return table;
 }
 
-function generateForm(component) {
-    var form = component.name + '<form method="post" action="' + component.resource + '">';
+function generateForm(component, id) {
+    var form = component.name + '<form id="form' + id + '" method="post" action="' + component.resource + '">';
     var fields = component.data;
     for (var i = 0; i < fields.length; i++) {
         switch (fields[i].type) {
@@ -168,8 +168,8 @@ function generateForm(component) {
                 break;
         }
     }
-    form += '<button class="btn btn-green width-100" type="submit">'+
-            'Save</button></form>';
+    form += '</form><button id="' + id + '" class="btn btn-green width-100 save" type="submit">'+
+            'Save</button>';
     return form;
 }
 
@@ -188,8 +188,46 @@ function generateIframe(component) {
 	return component.name + '<iframe width="100%" src="' + component.resource + '"></iframe>';
 }
 
+function formToObject(form) {
+	var object = {};
+	var formArray = form.serializeArray();
+	$.each(formArray, function() {
+		if (object[this.name] !== undefined) {
+			if (!object[this.name].push) {
+				object[this.name] = [object[this.name]];
+			}
+	    		object[this.name].push(this.value || '');
+		} else {
+			object[this.name] = this.value || '';
+		}
+	});
+	return object;
+};
+
+function setup(id) {
+	$('button[id="' + id + '"]').click(function() {
+		var data = formToObject($('form[id="form' + this.id + '"]'));
+		$.ajax({
+			type: "POST",
+			url: $('form[id="form' + this.id + '"]').attr('action'),
+			data: JSON.stringify(data),
+			//contentType: "application/json; charset=utf-8",
+			success: function(data, status, xhr) {
+				console.log('successfully posted form');
+				console.log(xhr.status);
+			},
+			error: function(xhr) {
+				console.log('error posting form');
+				console.log(xhr.status);
+			}
+		});
+	});
+}
+
 $(document).ready(function() {
+
     init();
+
     $('select[id="layouts"]').change(function() {
         if ($('select[id="layouts"]').val() != 'none') {
             renderLayout($('select[id="layouts"]').val());

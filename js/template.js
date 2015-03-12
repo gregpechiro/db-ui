@@ -2,7 +2,7 @@ var row = 0;
 var position = 0;
 var currentWidth = 0;
 var templates = [];
-var resource = "data/templates.json";
+var resource = 'http://localhost:8080/view/template';
 
 
 function getUrlParameter(param) {
@@ -116,20 +116,41 @@ function reorganize() {
 function save() {
     var template = {};
     template["name"] = $('input[id="templateName"]').val();
+    template["id"] = $('input[id="templateId"]').val();
     var positions = [];
     for (var i = 0; i < position; i++) {
         var w =+ $('div[id="position' + (i+1) + '"]').attr('data-width');
         positions.push(w);
     }
     template['positions'] = positions;
-    alert(JSON.stringify(template));
+    $.ajax({
+          type: "POST",
+          url: 'http://localhost:8080/view/template',
+          data: JSON.stringify(template),
+        contentType: "application/json; charset=utf-8",
+          success: function() {
+            console.log('success');
+        },
+        error: function() {
+            console.log('error');
+        }
+    });
 }
 
-function fill(id) {
-    var template = templates[id];
+function fill(template) {
+    $('input[id="templateId"]').val(template.id);
     $('input[id="templateName"]').val(template.name);
     for (var i = 0; i < template.positions.length; i++) {
         addPosition(template.positions[i]);
+    }
+}
+
+function init() {
+    var tempId = getUrlParameter('template');
+    if (tempId != null) {
+        getData(resource + '/' + tempId, function(data) {
+            fill(data);
+        });
     }
 }
 
@@ -160,16 +181,6 @@ $(document).ready(function() {
             delRowPosition(id);
         }
     });
-
     addRow();
-
-    getData(resource, function(data) {
-		templates = data;
-		var tempId = getUrlParameter('template');
-		if (tempId != null) {
-			tempId =+ tempId;
-			fill(tempId);
-		}
-	});
-
+    init();
 });
