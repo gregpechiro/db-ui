@@ -1,33 +1,10 @@
-
+// global resources
 var resource = "http://localhost:8080/view/component";
 var count = 1;
 var multi = false;
 var addOptionDiv = 'div[id="all-options"] div[id="add-option"]';
 
-function getUrlParameter(param) {
-    var pageURL = window.location.search.substring(1);
-    var urlVariables = pageURL.split('&');
-    for (var i = 0; i < urlVariables.length; i++) {
-        var parameterName = urlVariables[i].split('=');
-        if (parameterName[0] == param) {
-            return parameterName[1];
-        }
-    }
-}
-
-function getData(url, handleData) {
-	$.ajax({
-		url: url,
-		dataType:'json',
-		success:function(data) {
-			handleData(data);
-		},
-		error: function() {
-			console.log('error retrieving');
-		}
-	});
-}
-
+// create component object and save to db
 function save() {
     var component = {};
     component['id'] = $('input[id="id"]').val();
@@ -59,20 +36,6 @@ function save() {
     });
 }
 
-function fill(c) {
-    $('input[id="id"]').val(c.id);
-	$('input[id="name"]').val(c.name);
-	$('select[id="type"]').val(c.type);
-	$('input[id="resource"]').val(c.resource);
-	for (var i = 0; i < c.data.length; i++) {
-		$('div[id="option' + i + '"] input').val(c.data[i].name);
-		$('div[id="option' + i + '"] select').val(c.data[i].type);
-		if ((i + 1) < c.data.length) {
-			addOption();
-		}
-	}
-}
-
 // add input with delete button add placeholder after input set delete action
 function addOption() {
 	$(addOptionDiv).html($('div[id="next-option-input"]').html());
@@ -87,6 +50,22 @@ function addOption() {
 	count++;
 }
 
+// fill with given component
+function fill(component) {
+    $('input[id="id"]').val(component.id);
+	$('input[id="name"]').val(component.name);
+	$('select[id="type"]').val(component.type);
+	$('input[id="resource"]').val(component.resource);
+	for (var i = 0; i < component.data.length; i++) {
+		$('div[id="option' + i + '"] input').val(component.data[i].name);
+		$('div[id="option' + i + '"] select').val(component.data[i].type);
+		if ((i + 1) < component.data.length) {
+			addOption();
+		}
+	}
+}
+
+// initialize
 function init() {
     var componentId = getUrlParameter('component');
     if (componentId != null) {

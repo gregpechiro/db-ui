@@ -1,26 +1,15 @@
-
+// global variables
 var resource = "http://localhost:8080/view/component";
 
-function getData(handleData) {
-	$.ajax({
-		url: resource,
-		dataType:'json',
-		success:function(data) {
-			handleData(data);
-		},
-		error: function() {
-			console.log('error retrieving');
-		}
-	});
-}
-
+// initialize
 function init(data) {
-	getData(function(data) {
+	getData(resource, function(data) {
 		var table = generateTable(data);
 		$('div[id="table"]').html(table);
 	});
 }
 
+// generate table off of database table
 function generateTable(data) {
 	var table = '';
 	table += '<table><thead><tr><th>Name</th><th>Type</th><th>Resource</th><th>Data</th><th></th></tr></thead><tbody>';
@@ -43,5 +32,5 @@ function generateTable(data) {
 $(document).ready(function() {
 
 	init();
-	
+
 });

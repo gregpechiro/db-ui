@@ -1,26 +1,15 @@
-
+// global variables
 var resource = "http://localhost:8080/view/layout";
 
-function getData(handleData) {
-	$.ajax({
-		url: resource,
-		dataType:'json',
-		success:function(data) {
-			handleData(data);
-		},
-		error: function() {
-			console.log('error retrieving');
-		}
-	});
-}
-
+// initialize
 function init(data) {
-	getData(function(data) {
+	getData(resource, function(data) {
 		var table = generateTable(data);
 		$('div[id="table"]').html(table);
 	});
 }
 
+// generate table off of database data
 function generateTable(data) {
 	var table = '';
 	table += '<table><thead><tr><th>Name</th><th>Global Resource</th><th>Template</th><th>Components</th><th></th></tr></thead><tbody>';

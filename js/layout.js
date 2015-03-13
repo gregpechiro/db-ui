@@ -1,5 +1,4 @@
-
-var count = 1;
+// global variables
 var componentsUrl = 'http://localhost:8080/view/component';
 var templatesUrl = 'http://localhost:8080/view/template';
 var layoutUrl = 'http://localhost:8080/view/layout';
@@ -12,19 +11,32 @@ var iFrameHtml = '<iframe width="100%" src="http://localhost/fighter"></iframe>'
 var componentReady = false;
 var templateReady = false;
 
-function getData(url, handleData) {
-	$.ajax({
-		url: url,
-		dataType:'json',
-		success:function(data) {
-			handleData(data);
-		},
-		error: function() {
-			console.log('error retrieving');
-		}
-	});
-}
+// function getData(url, handleData) {
+// 	$.ajax({
+// 		url: url,
+// 		dataType:'json',
+// 		success:function(data) {
+// 			handleData(data);
+// 		},
+// 		error: function() {
+// 			console.log('error retrieving');
+// 		}
+// 	});
+// }
 
+// function getUrlParameter(param) {
+//     var pageURL = window.location.search.substring(1);
+//     var urlVariables = pageURL.split('&');
+//     for (var i = 0; i < urlVariables.length; i++) {
+//         var parameterName = urlVariables[i].split('=');
+//         if (parameterName[0] == param) {
+//             return parameterName[1];
+//         }
+//     }
+// }
+//
+
+// create options in template select from database templates
 function templateOption() {
     var options = '<option value="none">--- Choose a Template ---</option>'
     for (var i = 0; i < templates.length; i++) {
@@ -33,17 +45,7 @@ function templateOption() {
     $('select[id="templates"]').html(options);
 }
 
-function getUrlParameter(param) {
-    var pageURL = window.location.search.substring(1);
-    var urlVariables = pageURL.split('&');
-    for (var i = 0; i < urlVariables.length; i++) {
-        var parameterName = urlVariables[i].split('=');
-        if (parameterName[0] == param) {
-            return parameterName[1];
-        }
-    }
-}
-
+// trigger fill if layout param is given
 function getLayout() {
 	var layoutId = getUrlParameter('layout');
 	if (layoutId != null) {
@@ -54,6 +56,7 @@ function getLayout() {
 	}
 }
 
+// fill with given layout
 function fill(layout) {
 	$('input[id="layoutId"]').val(layout.id);
 	$('input[id="layoutName"]').val(layout.name);
@@ -73,25 +76,7 @@ function fill(layout) {
 	}
 }
 
-function init() {
-    getData(componentsUrl, function(data) {
-        components = data;
-		componentReady = true;
-		if (componentReady && templateReady) {
-			getLayout();
-		}
-    });
-
-    getData(templatesUrl, function(data) {
-        templates = data;
-        templateOption();
-		templateReady = true;
-		if (componentReady && templateReady) {
-			getLayout();
-		}
-    });
-}
-
+// link componnet select to action
 function linkComponentSelect() {
     $('select.choose').change(function() {
 		var id = 'component' + this.parentNode.parentNode.id
@@ -111,6 +96,7 @@ function linkComponentSelect() {
     });
 }
 
+// create select of components from database
 function getComponentSelect() {
     var s = '<select class="choose"><option value="none">--- Choose a Component ---</option>';
     for (var i = 0; i < components.length; i++) {
@@ -120,7 +106,7 @@ function getComponentSelect() {
     return s;
 }
 
-
+// create positions from selected template
 function positions(id) {
 	var template = {};
 	for (var i = 0; i < templates.length; i++) {
@@ -150,6 +136,7 @@ function positions(id) {
     linkComponentSelect();
 }
 
+// dummy filler from selected component
 function filler(type) {
     switch (type) {
         case 'form':
@@ -167,6 +154,7 @@ function filler(type) {
     }
 }
 
+// create layout object and save to db
 function save() {
 	var layout = {};
 	layout['id'] = $('input[id="layoutId"]').val();
@@ -198,6 +186,26 @@ function save() {
 			console.log('error');
 		}
 	});
+}
+
+// initialize
+function init() {
+    getData(componentsUrl, function(data) {
+        components = data;
+		componentReady = true;
+		if (componentReady && templateReady) {
+			getLayout();
+		}
+    });
+
+    getData(templatesUrl, function(data) {
+        templates = data;
+        templateOption();
+		templateReady = true;
+		if (componentReady && templateReady) {
+			getLayout();
+		}
+    });
 }
 
 $(document).ready(function() {

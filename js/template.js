@@ -1,35 +1,10 @@
+// setup global variables
 var row = 0;
 var position = 0;
 var currentWidth = 0;
-var templates = [];
 var resource = 'http://localhost:8080/view/template';
 
-
-function getUrlParameter(param) {
-    var pageURL = window.location.search.substring(1);
-    var urlVariables = pageURL.split('&');
-    for (var i = 0; i < urlVariables.length; i++) {
-        var parameterName = urlVariables[i].split('=');
-        if (parameterName[0] == param) {
-            return parameterName[1];
-        }
-    }
-}
-
-function getData(url, handleData) {
-	$.ajax({
-		url: url,
-		dataType:'json',
-		success:function(data) {
-			handleData(data);
-		},
-		error: function() {
-			console.log('error retrieving');
-		}
-	});
-}
-
-
+// determine the current width of a row by the id
 function getRowWidth(id) {
     var width = 0;
     var positions = $('div[id="row' + id + '"] div.position');
@@ -40,17 +15,20 @@ function getRowWidth(id) {
     return width;
 }
 
+// safely add a row (helper)
 function addRow() {
     row++;
     $('div[id="positions"]').append('<div id="row' + row + '" class="units-row units-padding myRow"></div>');
     $('select[id="chosenRow"]').append('<option id="' + row + '" value="' + row + '">Row ' + row + '</option>');
 }
 
+// safely delete a row (helper)
 function delRow(id) {
     $('div[id="row' + id + '"]').remove();
     $('select[id="chosenRow"] option[id="' + id + '"]').remove();
 }
 
+// add a single position to the last row
 function addPosition(width) {
     position++;
     if (currentWidth + width > 100) {
@@ -63,6 +41,7 @@ function addPosition(width) {
     $('div[id="position' + position + '"]').html('<h3>Position ' + position + '</h3>');
 }
 
+// delete a single position from the last row
 function delPosition() {
     var width =+ $('div[id="position' + position + '"]').attr('data-width');
     $('div[id="position' + position + '"]').remove();
@@ -77,6 +56,7 @@ function delPosition() {
     }
 }
 
+// add a single position to a given row
 function addRowPosition(id) {
     var rowWidth = getRowWidth(id);
     position++;
@@ -90,6 +70,7 @@ function addRowPosition(id) {
     }
 }
 
+// delete a single position from a given row
 function delRowPosition(id) {
     var positions = $('div[id="row' + id + '"] div.position');
     positions[positions.length - 1].remove();
@@ -99,6 +80,7 @@ function delRowPosition(id) {
     reorganize();
 }
 
+// rename/reorder positions after addition/deletion to/from a given row
 function reorganize() {
     position = 0;
     row = 0;
@@ -113,6 +95,7 @@ function reorganize() {
     }
 }
 
+// create template object and save to db
 function save() {
     var template = {};
     template["name"] = $('input[id="templateName"]').val();
@@ -137,6 +120,7 @@ function save() {
     });
 }
 
+// fill with given template
 function fill(template) {
     $('input[id="templateId"]').val(template.id);
     $('input[id="templateName"]').val(template.name);
@@ -145,6 +129,7 @@ function fill(template) {
     }
 }
 
+// intitialization
 function init() {
     var tempId = getUrlParameter('template');
     if (tempId != null) {
@@ -181,6 +166,9 @@ $(document).ready(function() {
             delRowPosition(id);
         }
     });
+
     addRow();
+
     init();
+
 });
