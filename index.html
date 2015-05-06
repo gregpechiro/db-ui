@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="gridster">
+<html>
 	<head>
 		<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
 		<script src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
@@ -7,11 +7,11 @@
 		<style type="text/css">
 			.editable { padding: 10px; float: left; margin: 0 10px 10px 0; border:1px solid red;}
 		</style>
-		<title>Gridster Test</title>
+		<title>Test</title>
 	</head>
 	<body>
 		<br><br>
-		<div ng-controller="gridCtrl">
+		<div>
 			<div class="row">
 				<div class="col-lg-offset-4 col-lg-4">
 					<button id="cler" class="btn btn-danger">Clear</button>
@@ -28,22 +28,72 @@
 		<div id="addModal">
 			<form id="addForm">
 				<label>Type</label>
-				<select name="type">
-					<option value="table">Table</option>
+				<select id="type" name="type">
 					<option value="form">Form</option>
+					<option value="table">Table</option>
 				</select>
 				<br><br>
-				<label>Data</label>
-				<select name="data">
-					<option value="users.json">Users</option>
-					<option value="user.json">User</option>
-				</select>
+				<label>Object</label>
+				<input type="text" id="resource" name="resource" value="">
+				<br><br>
+				<div id="all-options">
+					<label>Fields</label>
+					<div id="option0">
+						<span name="option">
+							<input id="option0" type="text" name="fields" class="width-50" placeholder="Name">
+							<select id="option0" class="width-25">
+								<option value="text">Text</option>
+								<option value="number">Number</option>
+								<option value="boolean">Boolean</option>
+							</select>
+						</span>
+					</div>
+				</div>
 			</form>
 		</div>
 
 		<div id="editModal">
 			<form id="editForm">
+				<label>Type</label>
+				<select id="type" name="type">
+					<option value="form">Form</option>
+					<option value="table">Table</option>
+				</select>
+				<label>Object</label>
+				<input type="text" style="width:45%" id="resource" name="resource" value="">
+				<br><br>
+				<div id="all-options">
+					<label>Fields</label>
+					<div id="option0">
+						<span name="option">
+							<input id="option0" type="text" name="fields" class="width-50" placeholder="Name">
+							<select id="option0" class="width-25">
+								<option value="text">Text</option>
+								<option value="number">Number</option>
+								<option value="boolean">Boolean</option>
+							</select>
+						</span>
+					</div>
+				</div>
 			</form>
+		</div>
+
+		<div id="next-option-input" hidden="true">
+			<div id="add-option" class="extra">
+				<span name="option">
+					<input type="text" name="fields" class="width-50" placeholder="Name">
+					<select name="type" class="width-25">
+						<option value="text">Text</option>
+						<option value="number">Number</option>
+						<option value="boolean">Boolean</option>
+					</select>
+					<a href="" name="remove-option" class="btn btn-red">x</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="next-option-div" hidden="true">
+			<div id="add-option" class="extra"></div>
 		</div>
 
 
@@ -52,6 +102,51 @@
 			var widgets = {};
 			var editing;
 			var i = 0;
+			var addOptionDiv = 'div[id="all-options"] div[id="add-option"]';
+			var count = 1;
+			var specs = {};
+
+			function addOption(form, field) {
+				field = (field === undefined) ? {type:'text'} : field;
+				$(form + ' div[id="all-options"]').append($('div[id="next-option-input"]').html());
+				$(form + ' ' + addOptionDiv).attr('id', 'option' + count);
+				$(form + ' div[id="option' + count + '"] input').attr('id', 'option' + count).val(field.name);
+				$(form + ' div[id="option' + count + '"] select').attr('id', 'option' + count).val(field.type);
+				$(form + ' div[id="option' + count + '"] a').attr('id', 'option' + count);
+				//$(form + ' div[id="option' + count + '"]').after($(' div[id="next-option-div"]').html());
+				$(form + ' a[id="option' + count + '"]').click(function(e) {
+					e.preventDefault();
+					$(form + ' div[id="'+$(this).attr('id')+'"]').remove();
+				});
+				count++;
+			}
+
+			function resetForm(form) {
+				$(form + ' div.extra').remove();
+				$(form + ' input[id="option0"]').val('');
+				$(form + ' select[id="option0"]').val('text');
+				$(form + ' input[id="resource"]').val('');
+				$(form + ' select[id="type"]').val('form');
+				count = 1;
+			}
+
+			function getForm(form) {
+				var component = {};
+    			component['type'] = $(form + ' select[id="type"]').val();
+    			component['resource'] = $(form + ' input[id="resource"]').val();
+    			var data = [];
+    			if (component['type'] != 'iframe') {
+        			var spans = $(form + ' div[id="all-options"] span[name="option"]');
+        			for (var i = 0; i < spans.length; i++) {
+            			var dat = {};
+            			dat['name'] = spans[i].children[0].value;
+            			dat['type'] = spans[i].children[1].value;
+            			data.push(dat);
+        			}
+    			}
+				component['fields'] = data;
+				return component;
+			}
 
 			function generateTable(entities) {
 				var table = '';
@@ -72,10 +167,10 @@
 			}
 
 
-			function generateForm(entity) {
+			function generateForm(component) {
 				var form = '</form">';
-				for(var field in entity) {
-					form += '<input style="width:100%;" placeholder="' + field + '">';
+				for(var field in component.fields) {
+					form += '<input style="width:100%;" placeholder="' + component.fields[field].name + '">';
 				}
 				form += '<button style="width:100%;">Save</button>';
 				return form;
@@ -93,39 +188,44 @@
 							getData(widget.action, generateTable, span);
 							break;
 						case "form":
-							getData(widget.action, generateForm, span);
+							span.html(generateForm(component));
+							$('#content').append(span);
 							break;
 						default:
 							alert("type: " + type + ", action: " + action);
 					}
 				}
+				init();
 			}
 
-			function add(type, action) {
-				var span = $('<span class="editable" style="position:absolute;"></span>');
-				var widget = {type: type, action: action};
-				widgets[i] = widget;
+			function add(component) {
+				var span = $('<span class="editable" style="position:absolute; width:300px"></span>');
+				widgets[i] = component;
 				span.attr('id', i);
-				switch(type) {
+				span.css({top: component.top, left: component.left, height: component.height, width: component.width});
+				switch(component.type) {
 					case "table":
-						getData(widget.action, generateTable, span);
+						console.log("TABLE");
 						break;
 					case "form":
-						getData(widget.action, generateForm, span);
+						span.html(generateForm(component));
 						break;
 					default:
 						alert("type: " + type + ", action: " + action);
 				}
-				edit(i);
+				$('#content').append(span);
+				//edit(i);
 				i++;
+				init();
 			}
 
 			function init() {
 				$('.editable').draggable({
-					grid: [ 30, 30 ],
+					grid: [ 50, 50 ],
 					stop: function( event, ui ) {savePosition(ui);}
 				});
 				$('.editable' ).resizable({
+					grid: [ 50, 50 ],
 					stop: function( event, ui ) {saveSize(ui)}
 				});
 				$('.editable').click(function() {
@@ -166,26 +266,83 @@
 					modal: true,
 					autoOpen: false,
 					buttons: {
+						'Add Option' : function() {
+							addOption('form[id="addForm"]');
+						},
 						Save: function() {
-							var form = formToObject($('form[id="addForm"]'));
-							add(form.type, form.data);
+							var component = getForm('form[id="addForm"]');
+							add(component);
+							resetForm('form[id="addForm"]');
 							$(this).dialog('close');
 						}
 					}
 				});
 				$('#editModal').dialog({
-					title : 'Edit Menu',
+					title : 'Add',
 					position: { my: "right	 top", at: "right top", of: window },
-					buttons: {
-						Delete: function() {
-							$('span[id="' + editing + '"]').remove();
-							$('#editModal').dialog('option', 'title', 'Edit Menu');
-							delete widgets[editing];
-							editing = null;
+					width: 375,
+					maxHeight: 550,
+					buttons: [
+						{
+      						text: "Add Option",
+      						click: function() {
+								addOption('form[id="editForm"]');
+							}
+      					},
+						{
+							text: "Save",
+							click: function() {
+								var component = getForm('form[id="editForm"]');
+								if (editing != null) {
+									component.height = widgets[editing].height
+									component.width = widgets[editing].width
+									component.left = widgets[editing].left
+									component.top = widgets[editing].top
+								}
+								add(component);
+								deleteWidget(editing);
+							}
+						},
+						{
+							text: "Cancel",
+							click: function() {
+								deleteWidget(editing);
+							}
 						}
-					}
+					]
+
+
+
+						// 'Add Option' : function() {
+						// 	addOption('form[id="editForm"]');
+						// },
+						// Save: function() {
+						// 	var component = getForm('form[id="editForm"]');
+						// 	if (editing != null) {
+						// 		component.height = widgets[editing].height
+						// 		component.width = widgets[editing].width
+						// 		component.left = widgets[editing].left
+						// 		component.top = widgets[editing].top
+						// 	}
+						// 	add(component);
+						// 	deleteWidget(editing);
+						// },
+						// Delete: function() {
+						// 	deleteWidget(editing);
+						// }
 				});
 			});
+
+			function deleteWidget(id) {
+				$('span[id="' + id + '"]').remove();
+				$('#editModal').dialog('option', 'title', 'Add');
+				delete widgets[id];
+				editing = null;
+				resetForm('form[id="editForm"]');
+				var buttons = $('#editModal').dialog('option', 'buttons');
+				buttons[2].text = "Cancel";
+				$('#editModal').dialog('option', 'buttons', buttons);
+			}
 
 			function getData(url, f, span) {
 				$.ajax({
@@ -202,12 +359,30 @@
 
 			function edit(id) {
 				editing = id;
+				component = widgets[id];
+				resetForm('form[id="editForm"]');
+				$('#editForm select[id="type"]').val(component.type);
+				$('#editForm input[id="resource"]').val(component.resource);
+				$('#editForm input[id="option0"]').val(component.fields[0].name);
+				$('#editForm select[id="option0"]').val(component.fields[0].type);
+				for (var i = 1; i < component.fields.length; i++) {
+					addOption('form[id="editForm"]', component.fields[i]);
+				}
 				$('#editModal').dialog('option', 'title', 'Editing Span: ' + editing);
+				var buttons = $('#editModal').dialog('option', 'buttons');
+				buttons[2].text = "Delete";
+				$('#editModal').dialog('option', 'buttons', buttons);
 				$('#editModal').dialog('open');
 			}
 
 			$('button[id="add"]').click(function() {
-				$('div[id="addModal"]').dialog('open');
+				editing = null;
+				resetForm('form[id="editForm"]');
+				var buttons = $('#editModal').dialog('option', 'buttons');
+				buttons[2].text = "Cancel";
+				$('#editModal').dialog('option', 'buttons', buttons);
+				$('#editModal').dialog('option', 'title', 'Add');
+				$('div[id="editModal"]').dialog('open');
 			});
 
 			$('button[id="cler"]').click(function() {
@@ -217,7 +392,9 @@
 			$('button[id="fill"]').click(function() {
 				display(widgets);
 			});
-	</script>
+
+
+		</script>
 
 	</body>
 </html>
