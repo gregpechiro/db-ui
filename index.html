@@ -25,7 +25,7 @@
 			</div>
 		</div>
 
-		<div id="addModal">
+		<!-- <div id="addModal">
 			<form id="addForm">
 				<label>Type</label>
 				<select id="type" name="type">
@@ -50,7 +50,7 @@
 					</div>
 				</div>
 			</form>
-		</div>
+		</div> -->
 
 		<div id="editModal">
 			<form id="editForm">
@@ -221,11 +221,11 @@
 
 			function init() {
 				$('.editable').draggable({
-					grid: [ 50, 50 ],
+					grid: [ 40, 40 ],
 					stop: function( event, ui ) {savePosition(ui);}
 				});
 				$('.editable' ).resizable({
-					grid: [ 50, 50 ],
+					grid: [ 40, 40 ],
 					stop: function( event, ui ) {saveSize(ui)}
 				});
 				$('.editable').click(function() {
@@ -243,40 +243,40 @@
 				widgets[ui.helper[0].id].top = ui.position.top
 			}
 
-			function formToObject(form) {
-				var object = {};
-				var formArray = form.serializeArray();
-				$.each(formArray, function() {
-					if (object[this.name] !== undefined) {
-						if (!object[this.name].push) {
-							object[this.name] = [object[this.name]];
-						}
-							object[this.name].push(this.value || '');
-					} else {
-						object[this.name] = this.value || '';
-					}
-				});
-				return object;
-			};
+			// function formToObject(form) {
+			// 	var object = {};
+			// 	var formArray = form.serializeArray();
+			// 	$.each(formArray, function() {
+			// 		if (object[this.name] !== undefined) {
+			// 			if (!object[this.name].push) {
+			// 				object[this.name] = [object[this.name]];
+			// 			}
+			// 				object[this.name].push(this.value || '');
+			// 		} else {
+			// 			object[this.name] = this.value || '';
+			// 		}
+			// 	});
+			// 	return object;
+			// };
 
 
 			$(document).ready(function() {
 				init();
-				$('#addModal').dialog({
-					modal: true,
-					autoOpen: false,
-					buttons: {
-						'Add Option' : function() {
-							addOption('form[id="addForm"]');
-						},
-						Save: function() {
-							var component = getForm('form[id="addForm"]');
-							add(component);
-							resetForm('form[id="addForm"]');
-							$(this).dialog('close');
-						}
-					}
-				});
+				// $('#addModal').dialog({
+				// 	modal: true,
+				// 	autoOpen: false,
+				// 	buttons: {
+				// 		'Add Option' : function() {
+				// 			addOption('form[id="addForm"]');
+				// 		},
+				// 		Save: function() {
+				// 			var component = getForm('form[id="addForm"]');
+				// 			add(component);
+				// 			resetForm('form[id="addForm"]');
+				// 			$(this).dialog('close');
+				// 		}
+				// 	}
+				// });
 				$('#editModal').dialog({
 					title : 'Add',
 					position: { my: "right	 top", at: "right top", of: window },
@@ -344,18 +344,18 @@
 				$('#editModal').dialog('option', 'buttons', buttons);
 			}
 
-			function getData(url, f, span) {
-				$.ajax({
-					datatype: "JSON",
-					url: url
-				}).done(function(data) {
-					$('.editable').resizable('destroy');
-					var w = f(data);
-					span.html(w);
-					$('#content').html($('#content').html() + span[0].outerHTML);
-					init();
-				});
-			}
+			// function getData(url, f, span) {
+			// 	$.ajax({
+			// 		datatype: "JSON",
+			// 		url: url
+			// 	}).done(function(data) {
+			// 		$('.editable').resizable('destroy');
+			// 		var w = f(data);
+			// 		span.html(w);
+			// 		$('#content').html($('#content').html() + span[0].outerHTML);
+			// 		init();
+			// 	});
+			// }
 
 			function edit(id) {
 				editing = id;
