@@ -53,6 +53,7 @@
 						<option value="text">Text</option>
 						<option value="number">Number</option>
 						<option value="boolean">Boolean</option>
+						<option value="email">Email</option>
 					</select>
 					<a href="" name="remove-option">x</a>
 				</span>
@@ -70,7 +71,6 @@
 			var i = 0;
 			var addOptionDiv = 'div[id="all-options"] div[id="add-option"]';
 			var count = 1;
-			//var specs = {};
 
 			function addOption(field) {
 				field = (field === undefined) ? {type:'text'} : field;
@@ -113,37 +113,76 @@
 				return component;
 			}
 
-			function generateTable(entities) {
-				var table = '';
-				table += '<table style="width:100%;"><thead><tr>';
-				for(var col in entities[0]) {
-				   table += "<th>" + col + "</th>";
+			function generateTable(component, live) {
+				//var table = '';
+				//table += '<table style="width:100%;"><thead><tr>';
+				//for(var col in entities[0]) {
+				//   table += "<th>" + col + "</th>";
+				//}
+				//table += '</tr></thead><tbody>';
+				//for(var row in entities) {
+				//	table += '<tr>';
+				//	for(var col in entities[row]) {
+				//		table += "<td>" + entities[row][col] + "</td>";
+				//	}
+				//	 table += '</tr>';
+				//}
+				//table += '</tbody></table>';
+
+				var table = $('<table></table>');
+				var headerRow = $('<tr></tr>');
+				for (field in component.fields) {
+					headerRow.append('<th>' + title(component.fields[field].name) + '</th>');
 				}
-				table += '</tr></thead><tbody>';
-				for(var row in entities) {
-					table += '<tr>';
-					for(var col in entities[row]) {
-						table += "<td>" + entities[row][col] + "</td>";
+				table.append($('<thead></thead>').append(headerRow));
+				var tbody = $('<tbody></tbody>');
+				if (live) {
+					var row = $('<tr></tr>');
+					for (field in component.fields) {
+						row.append('<td>{{' + component.resource + '.' + component.fields[field].name + '}}</td>');
 					}
-					 table += '</tr>';
+					tbody.append('{% for ' + component.resource + ' in ' + component.resource + 's %}');
+					tbody.append(row);
+					tbody.append('{% endfor %}');
+				} else {
+					for (var j = 0; j < 5; j++) {
+						var row = $('<tr></tr>');
+						for (field in component.fields) {
+							row.append('<td>DATA ' + j + '</td>');
+						}
+						tbody.append(row);
+					}
 				}
-				table += '</tbody></table>';
+				table.append(tbody);
 				return table;
 			}
 
 
 			function generateForm(component, live) {
-				var form = '<form>';
+				var form = $('<form></form>');
 				for(var field in component.fields) {
-					if (live) {
-						form += '<input style="width:100%;" placeholder="' + title(component.fields[field].name) +
-						'" name="' + component.fields[field].name + '" value="{{' + component.resource + '.' + component.fields[field].name + '}}">';
+					form.append('<label>' + title(component.fields[field].name) + '</label>');
+					if (component.fields[field].type !== 'boolean') {
+						var input = $('<input style="width:100%">');
+						input.attr('placeholder', title(component.fields[field].name));
+						input.attr('name', component.fields[field].name);
+						input.attr('type', component.fields[field].type);
+						if (live) {
+							input.attr('value', '{{' + component.resource + '.' + component.fields[field].name + '}}');
+						}
+						form.append(input);
 					} else {
-						form += '<input style="width:100%;" placeholder="' + title(component.fields[field].name) + '">';
+						var input1 = $('<input type="radio">');
+						input1.attr('name', component.fields[field].name);
+						var input0 = $('<input type="radio">');
+						input0.attr('name', component.fields[field].name);
+						form.append(input1);
+						form.append('True')
+						form.append(input0);
+						form.append('False');
 					}
 				}
-				form += '<button style="width:100%;">Save</button>';
-				form += '</form>';
+				form.append('<button>Save</button>');
 				return form;
 			}
 
@@ -164,7 +203,7 @@
 					span.css({top: component.top,left:component.left,height:component.height,width:component.width});
 					switch(type) {
 						case "table":
-							getData(component.action, generateTable, span);
+							span.html(generateTable(component, live));
 							break;
 						case "form":
 							span.html(generateForm(component, live));
@@ -174,7 +213,6 @@
 					}
 					div.append(span);
 				}
-				//console.log('<!doctype html><html><head></head><body>' + div.prop('outerHTML') + '</body></html>');
 				return div;
 			}
 
@@ -189,7 +227,7 @@
 				span.css({top: component.top, left: component.left, height: component.height, width: component.width});
 				switch(component.type) {
 					case "table":
-						console.log("TABLE");
+						span.html(generateTable(component));
 						break;
 					case "form":
 						span.html(generateForm(component));
