@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+		<script src="//code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
+		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+		<title>Test</title>
+	</head>
+	<body>
+		<div id="editModal">
+			<form id="editForm">
+				<label>Type</label>
+				<select id="type" name="type">
+					<option value="form">Form</option>
+					<option value="table">Table</option>
+				</select>
+				<label>Object</label>
+				<input type="text" class="menu" id="resource" name="resource" value="">
+				<br><br>
+				<div id="all-options">
+					<label>Fields</label>
+					<div id="option0">
+						<span name="option">
+							<input id="option0" type="text" class="menu" name="fields" placeholder="Name">
+							<select id="option0">
+								<option value="text">Text</option>
+								<option value="number">Number</option>
+								<option value="boolean">Boolean</option>
+								<option value="password">Password</option>
+							</select>
+						</span>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div id="next-option-input" hidden="true">
+			<div id="add-option" class="extra">
+				<span name="option">
+					<input type="text" name="fields" class="menu" placeholder="Name">
+					<select name="type">
+						<option value="text">Text</option>
+						<option value="number">Number</option>
+						<option value="boolean">Boolean</option>
+						<option value="email">Email</option>
+						<option value="password">Password</option>
+					</select>
+					<a href="" name="remove-option">x</a>
+				</span>
+			</div>
+		</div>
+
+		<div id="next-option-div" hidden="true">
+			<div id="add-option" class="extra"></div>
+		</div>
+
+		<script type="text/javascript" id="code">
+
+			var components = {};
+			var editing;
+			var i = 0;
+			var addOptionDiv = 'div[id="all-options"] div[id="add-option"]';
+			var count = 1;
+			var currentTheme = '';
+			var currentStyle = '';
+
+			function addOption(field) {
+				field = (field === undefined) ? {type:'text'} : field;
+				$('form[id="editForm"] div[id="all-options"]').append($('div[id="next-option-input"]').html());
+				$('form[id="editForm"] ' + addOptionDiv).attr('id', 'option' + count);
+				$('form[id="editForm"] div[id="option' + count + '"] input').attr('id', 'option' + count).val(field.name);
+				$('form[id="editForm"] div[id="option' + count + '"] select').attr('id', 'option' + count).val(field.type);
+				$('form[id="editForm"] div[id="option' + count + '"] a').attr('id', 'option' + count);
+				$('form[id="editForm"] a[id="option' + count + '"]').click(function(e) {
+					e.preventDefault();
+					$('form[id="editForm"] div[id="'+$(this).attr('id')+'"]').remove();
+				});
+				count++;
+			}
+
+
+			$(document).ready(function() {
+				$('#editModal').dialog({
+					title : 'Add',
+					position: { my: "right top", at: "right top", of: window },
+					width: 375,
+					maxHeight: 550,
+					buttons: [
+						{
+      						text: "Add Option",
+							click: function() {
+								addOption();
+							}
+      					},
+						{
+							text: "Save",
+						},
+						{
+							text: "Cancel"
+						},
+						{
+							text: "Copy"
+						}
+					]
+				});
+
+			});
+
+		</script>
+
+	</body>
+</html>

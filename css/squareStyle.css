@@ -1,0 +1,95 @@
+
+/*FORM CSS, FORM CSS, FORM CSS, FORM CSS, FORM CSS, FORM CSS, FORM CSS, FORM CSS, FORM CSS, FORM CSS*/
+
+div.form {
+  border: 1px solid grey;
+}
+.form div.title {
+  background: grey;
+  padding: 5px 0 5px 5%;
+}
+.form div.body {
+  padding: 10px 5% 10px 5%;
+  background: white;
+}
+.form div.group {
+  width: 99%;
+  margin-bottom: 5px;
+}
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="number"],
+.form input[type="password"],
+.form input {
+  width: 97%;
+  margin-bottom: 5px;
+  padding: 8px 0 8px 2%;
+}
+.form input[type="checkbox"] {
+  width: auto;
+  padding: 0,0,0,0;
+}
+.form input[type="radio"] {
+    width: auto;
+    padding: 0,0,0,0;
+    margin-bottom: none;
+    margin-left: 2%;
+}
+.form button {
+  width: 100%;
+  background: grey;
+  transition: background-color 0.3s ease-out;
+  padding: 8px 0 8px 0;
+}
+.form button:hover {
+    background: lightGrey;
+}
+.form select {
+    width: 100%;
+    padding: 2px 0 2px 2%;
+    background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right;
+    -webkit-appearance: none;
+    background-position-x: 244px;
+   }
+
+/*TABLE CSS, TABLE CSS, TABLE CSS, TABLE CSS, TABLE CSS, TABLE CSS, TABLE CSS, TABLE CSS, TABLE CSS, TABLE CSS*/
+
+div.table {
+    border: 1px solid black;
+}
+.table div.title {
+  background: grey;
+  padding: 5px 0 5px 5%;
+}
+.table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table th {
+    border: 1px solid black;
+    text-align: left;
+    padding-left: 1em;
+    height: 30px;
+    background: lightGrey;
+}
+.table tbody tr:nth-child(odd) {
+    background-color: white;
+}
+.table tbody tr:nth-child(even) {
+    background-color: grey;
+}
+
+.table td {
+    border: 1px solid black;
+    padding: 4px;
+    vertical-align: bottom;
+}
+tr:last-child td {
+    border-width:1px 1px 0px 1px;
+}
+th:first-child, tr td:first-child {
+    border-width:1px 1px 0px 0px;
+}
+th:last-child, tr td:last-child {
+    border-width:1px 0px 0px 1px;
+}

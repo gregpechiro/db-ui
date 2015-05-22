@@ -1,0 +1,32 @@
+div.form,
+div.table {
+  border: 1px solid #A7C942;
+  box-shadow: 5px 5px 5px rgba(0,0,0,.1);
+}
+.form div.title,
+.table div.title {
+  background: #A7C942;
+  color: white;
+}
+.form div.body,
+.table div.body {
+    background: #f0f0f0;
+}
+.form button {
+  background: #A7C942;
+  color: white;
+}
+.form button:hover {
+  background: #EAF2D3;
+  color: black;
+}
+.table tbody tr:nth-child(odd) {
+    background-color: #f0f0f0;
+}
+.table tbody tr:nth-child(even) {
+    background-color: #A7C942;
+    color: white;
+}
+.table th {
+    background-color: #EAF2D3;
+}
