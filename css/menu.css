@@ -1,3 +1,33 @@
+.ui-front {
+    border: 2px solid grey;
+    background: rgb(250,250,250);
+}
+div.label {
+    width: 20%;
+    float: left;
+}
+select#type {
+    padding: 1px 0 1px 0;
+    width: 79%;
+    background: #fff;
+    margin-bottom: 5px;
+}
+input#resource.menu {
+    width: 78%;
+}
 input.menu {
-    width: 45%;
+    width: 56%;
+    margin-bottom: 3px;
+}
+select.menu {
+    padding: 1px 0 1px 0;
+    background: #fff;
+    width: 30%
+}
+span.ui-button-text {
+    font-size: smaller;
+}
+div.ui-dialog-buttonset {
+    width: 100%;
+    text-align: center;
 }

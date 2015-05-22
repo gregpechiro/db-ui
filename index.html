@@ -31,38 +31,46 @@
 		<div id="content"></div>
 
 		<div id="editModal">
-			<form id="editForm">
-				<label>Type</label>
+			<div id="editForm">
+				<div class="label">
+					<label>Type</label>
+				</div>
 				<select id="type" name="type">
 					<option value="form">Form</option>
 					<option value="table">Table</option>
+					<option value="iframe">iFrame</option>
 				</select>
-				<label>Object</label>
-				<input type="text" class="menu" id="resource" name="resource" value="">
-				<br><br>
-				<div id="all-options">
-					<label>Fields</label>
-					<div id="option0">
-						<span name="option">
-							<input id="option0" type="text" class="menu" name="fields" placeholder="Name">
-							<select id="option0">
-								<option value="text">Text</option>
-								<option value="number">Number</option>
-								<option value="boolean">Boolean</option>
-								<option value="password">Password</option>
-								<option value="date">Date</option>
-							</select>
-						</span>
+				<div id="editInner">
+					<div class="label">
+						<label>Object</label>
 					</div>
+					<input type="text" class="menu" id="resource" name="resource" value="">
+					<br><br>
+					<div id="all-options">
+						<label>Fields</label>
+						<div id="option0">
+							<span name="option">
+								<input id="option0" type="text" class="menu" name="fields" placeholder="Name">
+								<select id="option0" class="menu">
+									<option value="text">Text</option>
+									<option value="number">Number</option>
+									<option value="boolean">Boolean</option>
+									<option value="password">Password</option>
+									<option value="date">Date</option>
+								</select>
+							</span>
+						</div>
+					</div>
+					<button onclick="addOption()">Add Option</button>
 				</div>
-			</form>
+			</div>
 		</div>
 
 		<div id="next-option-input" hidden="true">
 			<div id="add-option" class="extra">
 				<span name="option">
 					<input type="text" name="fields" class="menu" placeholder="Name">
-					<select name="type">
+					<select name="type" class="menu">
 						<option value="text">Text</option>
 						<option value="number">Number</option>
 						<option value="boolean">Boolean</option>
@@ -70,7 +78,7 @@
 						<option value="password">Password</option>
 						<option value="date">Date</option>
 					</select>
-					<a href="" name="remove-option">x</a>
+					<button>X</button>
 				</span>
 			</div>
 		</div>
@@ -79,8 +87,44 @@
 			<div id="add-option" class="extra"></div>
 		</div>
 
+
+		<div id="fields" hidden="true">
+			<div class="label">
+				<label>Object</label>
+			</div>
+			<input type="text" class="menu" id="resource" name="resource" value="">
+			<br><br>
+			<div id="all-options">
+				<label>Fields</label>
+				<div id="option0">
+					<span name="option">
+						<input id="option0" type="text" class="menu" name="fields" placeholder="Name">
+						<select id="option0" class="menu">
+							<option value="text">Text</option>
+							<option value="number">Number</option>
+							<option value="boolean">Boolean</option>
+							<option value="password">Password</option>
+							<option value="date">Date</option>
+						</select>
+					</span>
+				</div>
+			</div>
+			<button onclick="addOption()">Add Option</button>
+		</div>
+
+		<div id="iframe" hidden="true">
+			<div class="label">
+				<label>URL</label>
+			</div>
+			<input type="text" class="menu" id="resource" name="resource">
+		</div>
+
+		<script src="js/gen.js"></script>
+		<script src="js/menu.js"></script>
+
 		<script type="text/javascript" id="code">
 
+			// init variables
 			var components = {};
 			var editing;
 			var i = 0;
@@ -89,172 +133,7 @@
 			var currentTheme = '';
 			var currentStyle = '';
 
-			function addOption(field) {
-				field = (field === undefined) ? {type:'text'} : field;
-				$('form[id="editForm"] div[id="all-options"]').append($('div[id="next-option-input"]').html());
-				$('form[id="editForm"] ' + addOptionDiv).attr('id', 'option' + count);
-				$('form[id="editForm"] div[id="option' + count + '"] input').attr('id', 'option' + count).val(field.name);
-				$('form[id="editForm"] div[id="option' + count + '"] select').attr('id', 'option' + count).val(field.type);
-				$('form[id="editForm"] div[id="option' + count + '"] a').attr('id', 'option' + count);
-				$('form[id="editForm"] a[id="option' + count + '"]').click(function(e) {
-					e.preventDefault();
-					$('form[id="editForm"] div[id="'+$(this).attr('id')+'"]').remove();
-				});
-				count++;
-			}
-
-			function resetEditForm() {
-				$('form[id="editForm"] div.extra').remove();
-				$('form[id="editForm"] input[id="option0"]').val('');
-				$('form[id="editForm"] select[id="option0"]').val('text');
-				$('form[id="editForm"] input[id="resource"]').val('');
-				$('form[id="editForm"] select[id="type"]').val('form');
-				count = 1;
-			}
-
-			function getEditForm() {
-				var component = {};
-    			component['type'] = $('form[id="editForm"] select[id="type"]').val();
-    			component['resource'] = $('form[id="editForm"] input[id="resource"]').val();
-    			var data = [];
-    			if (component['type'] != 'iframe') {
-        			var spans = $('form[id="editForm"] div[id="all-options"] span[name="option"]');
-        			for (var i = 0; i < spans.length; i++) {
-            			var dat = {};
-            			dat['name'] = spans[i].children[0].value;
-            			dat['type'] = spans[i].children[1].value;
-            			data.push(dat);
-        			}
-    			}
-				component['fields'] = data;
-				return component;
-			}
-
-			function generateTable(component, live) {
-				var panel = $('<div class="table"></div>');
-				panel.append($('<div class="title">' + makeTitle(component.resource) + 's Table</div>'));
-				var table = $('<table></table>');
-				var headerRow = $('<tr></tr>');
-				for (field in component.fields) {
-					headerRow.append('<th>' + makeTitle(component.fields[field].name) + '</th>');
-				}
-				table.append($('<thead></thead>').append(headerRow));
-				var tbody = $('<tbody></tbody>');
-				if (live) {
-					var row = $('<tr></tr>');
-					for (field in component.fields) {
-						row.append('<td>{{' + component.resource + '.' + component.fields[field].name + '}}</td>');
-					}
-					tbody.append('{% for ' + component.resource + ' in ' + component.resource + 's %}');
-					tbody.append(row);
-					tbody.append('{% endfor %}');
-				} else {
-					for (var j = 0; j < 5; j++) {
-						var row = $('<tr></tr>');
-						for (field in component.fields) {
-							row.append('<td>DATA ' + j + '</td>');
-						}
-						tbody.append(row);
-					}
-				}
-				table.append(tbody);
-				panel.append(table);
-				return panel;
-			}
-
-			function generateForm(component, live) {
-				var panel = $('<div class="form"></div>');
-				var title = $('<div class="title"></div>');
-				title.append(makeTitle(component.resource) + ' Form');
-				var body = $('<div class="body"></div>');
-				var form = $('<form></form>');
-				for(var field in component.fields) {
-					if (component.fields[field].type !== 'boolean') {
-						form.append('<label>' + makeTitle(component.fields[field].name) + '</label>');
-						var input = $('<input>');
-						input.attr('placeholder', makeTitle(component.fields[field].name));
-						input.attr('name', component.fields[field].name);
-						input.attr('type', component.fields[field].type);
-						if (live) {
-							input.attr('value', '{{' + component.resource + '.' + component.fields[field].name + '}}');
-						}
-						form.append(input);
-					} else {
-						var group = $('<div class="group"></div>');
-						group.append('<label>' + makeTitle(component.fields[field].name) + '</label>');
-						var input1 = $('<input type="radio">');
-						input1.attr('name', component.fields[field].name);
-						var input0 = $('<input type="radio">');
-						input0.attr('name', component.fields[field].name);
-						group.append(input1);
-						group.append('True')
-						group.append(input0);
-						group.append('False');
-						form.append(group);
-					}
-				}
-				form.append('<button>Save</button>');
-				body.append(form);
-				panel.append(title);
-				panel.append(body);
-
-				return panel;
-			}
-
-			function display(data) {
-				var spans = pageGen(data, false).children();
-				spans.addClass('editable');
-				$('#content').append(spans);
-				init();
-			}
-
-			function pageGen(data, live) {
-				var div = $('<div></div>');
-				for(var id in data) {
-					var component = data[id]
-					var type = data[id].type;
-					var span = $('<span style="position:absolute;"></span>');
-					span.attr('id', id);
-					span.css({top: component.top,left:component.left,height:component.height,width:component.width});
-					switch(type) {
-						case "table":
-							span.html(generateTable(component, live));
-							break;
-						case "form":
-							span.html(generateForm(component, live));
-							break;
-						default:
-							alert("type: " + type + ", action: " + action);
-					}
-					div.append(span);
-				}
-				return div;
-			}
-
-			function getPage() {
-				console.log('<!doctype html><html><head></head><body>' + pageGen(components, true).prop('outerHTML') + '</body></html>');
-			}
-
-			function add(component) {
-				var span = $('<span class="editable" style="position:absolute; width:300px"></span>');
-				components[i] = component;
-				span.attr('id', i);
-				span.css({top: component.top, left: component.left, height: component.height, width: component.width});
-				switch(component.type) {
-					case "table":
-						span.html(generateTable(component));
-						break;
-					case "form":
-						span.html(generateForm(component));
-						break;
-					default:
-						alert("type: " + type + ", action: " + action);
-				}
-				$('#content').append(span);
-				i++;
-				init();
-			}
-
+			// initialize editable html spans
 			function init() {
 				$('.editable').draggable({
 					grid: [ 35, 35 ],
@@ -269,16 +148,23 @@
 				});
 			}
 
+			// save size of current component
 			function saveSize(ui) {
 				components[ui.helper[0].id].height = ui.size.height;
 				components[ui.helper[0].id].width = ui.size.width;
+				if (components[ui.helper[0].id].type === 'iframe') {
+					add(components[ui.helper[0].id]);
+					deleteComponent(ui.helper[0].id);
+				}
 			}
 
+			// save position of current component
 			function savePosition(ui) {
 				components[ui.helper[0].id].left = ui.position.left
 				components[ui.helper[0].id].top = ui.position.top
 			}
 
+			// delete component from html an components list
 			function deleteComponent(id) {
 				$('span[id="' + id + '"]').remove();
 				$('#editModal').dialog('option', 'title', 'Add');
@@ -286,40 +172,11 @@
 				editing = null;
 				resetEditForm();
 				var buttons = $('#editModal').dialog('option', 'buttons');
-				buttons[2].text = "Cancel";
+				`buttons[1]`.text = "Cancel";
 				$('#editModal').dialog('option', 'buttons', buttons);
 			}
 
-			function edit(id) {
-				editing = id;
-				component = components[id];
-				resetEditForm();
-				$('#editForm select[id="type"]').val(component.type);
-				$('#editForm input[id="resource"]').val(component.resource);
-				$('#editForm input[id="option0"]').val(component.fields[0].name);
-				$('#editForm select[id="option0"]').val(component.fields[0].type);
-				for (var i = 1; i < component.fields.length; i++) {
-					addOption(component.fields[i]);
-				}
-				$('#editModal').dialog('option', 'title', 'Editing Span: ' + editing);
-				var buttons = $('#editModal').dialog('option', 'buttons');
-				buttons[2].text = "Delete";
-				if (buttons.length === 3) {
-					buttons.push(
-						{
-							text: "Copy",
-							click: function() {
-								var component = getEditForm();
-								add(component);
-								deleteComponent();
-							}
-						}
-					);
-				}
-				$('#editModal').dialog('option', 'buttons', buttons);
-				$('#editModal').dialog('open');
-			}
-
+			// pretty print all snake case camel case or combination
 			function makeTitle(s) {
 				var cap = false;
 				var newS = s[0].toUpperCase();
@@ -339,6 +196,7 @@
 				return newS;
 			}
 
+			// dynamically change css files
 			function changeCSS(cssFile, cssHref, style) {
 				var oldLink = $('link[href="' + cssHref + '"]');
 				if (cssFile === '') {
@@ -361,48 +219,16 @@
     		}
 
 			$(document).ready(function() {
-				init();
-				$('#editModal').dialog({
-					title : 'Add',
-					position: { my: "right	 top", at: "right top", of: window },
-					width: 375,
-					maxHeight: 550,
-					buttons: [
-						{
-      						text: "Add Option",
-      						click: function() {
-								addOption();
-							}
-      					},
-						{
-							text: "Save",
-							click: function() {
-								var component = getEditForm();
-								if (editing != null) {
-									component.height = components[editing].height
-									component.width = components[editing].width
-									component.left = components[editing].left
-									component.top = components[editing].top
-								}
-								add(component);
-								deleteComponent(editing);
-							}
-						},
-						{
-							text: "Cancel",
-							click: function() {
-								deleteComponent(editing);
-							}
-						}
-					]
-				});
+				//init();
+				menuInit();
 
+				// button selectors
 				$('button[id="add"]').click(function() {
 					editing = null;
 					resetEditForm();
 					var buttons = $('#editModal').dialog('option', 'buttons');
-					buttons[2].text = "Cancel";
-					if  (buttons.length === 4) {
+					buttons[1].text = "Cancel";
+					if  (buttons.length === 3) {
 						buttons.splice(3, 1);
 					}
 					$('#editModal').dialog('option', 'buttons', buttons);
@@ -426,6 +252,19 @@
 				$('button.switchTheme').click(function() {
 					changeCSS(this.getAttribute('data-css'), currentTheme, false);
 					currentTheme = this.getAttribute('data-css');
+				});
+
+				$('select[id="type"]').change(function() {
+					var type = $('select[id="type"]').val();
+					switch (type) {
+						case 'form':
+						case 'table':
+							$('div[id="editInner"]').html($('div[id="fields"]').html());
+							break;
+						case 'iframe':
+							$('div[id="editInner"]').html($('div[id="iframe"]').html());
+							break;
+					}
 				});
 
 			});

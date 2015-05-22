@@ -27,7 +27,7 @@ div.form {
   border-radius: 5px;
   width: 97%;
   margin-bottom: 5px;
-  padding: 8px 0 8px 2%;
+  padding: 6px 0 6px 2%;
 }
 .form input[type="checkbox"] {
   width: auto;
@@ -44,7 +44,7 @@ div.form {
   border-radius: 5px;
   background: grey;
   transition: background 0.3s ease-out;
-  padding: 8px 0 8px 0;
+  padding: 6px 0 6px 0;
 }
 .form button:hover {
     background: lightGrey;
