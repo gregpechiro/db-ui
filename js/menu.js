@@ -49,7 +49,7 @@ function edit(id) {
     resetEditForm();
     $('#editForm select[id="type"]').val(component.type);
     $('#editForm input[id="resource"]').val(component.resource);
-    if (component.type === form || component.type === table) {
+    if (component.type === "form" || component.type === "table") {
         $('#editForm input[id="option0"]').val(component.fields[0].name);
         $('#editForm select[id="option0"]').val(component.fields[0].type);
         for (var i = 1; i < component.fields.length; i++) {
