@@ -2,7 +2,7 @@
 var row = 0;
 var position = 0;
 var currentWidth = 0;
-var resource = 'http://localhost:8080/view/template';
+var resource = 'http://192.168.0.81:8080/view/template';
 
 // determine the current width of a row by the id
 function getRowWidth(id) {
@@ -107,9 +107,9 @@ function save() {
     }
     template['positions'] = positions;
     $.ajax({
-          type: "POST",
-          url: 'http://localhost:8080/view/template',
-          data: JSON.stringify(template),
+        type: "POST",
+        url: 'http://192.168.0.81:8080/view/template',
+        data: JSON.stringify(template),
         contentType: "application/json; charset=utf-8",
           success: function() {
             console.log('success');
